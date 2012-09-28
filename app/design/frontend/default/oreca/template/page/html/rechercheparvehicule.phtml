@@ -1,0 +1,182 @@
+<div class="rechveh-contenu">
+    <div class="rechveh-titre1">
+	TOUTES LES PIECES
+    </div>
+    <div class="rechveh-titre2">
+	POUR VOTRE VEHICULE
+    </div>
+    <div class="rechveh-drop-container">
+<?php
+$tabmarques = array();
+?>
+<select id="marqueVehicule" style="margin-bottom:8px; width:220px;" name="marqueVehicule" onchange="getOptions('modeleVehicule', jQuery('#marqueVehicule').val());">
+    <option value="">Marque</option>
+<?php
+$catracine = Mage::getModel('catalog/category')->load(1288);
+foreach ($catracine->getChildrenCategories() as $childCategory) {
+    ?>
+    <option value="<?php echo $childCategory->getId(); ?>"><?php echo $childCategory->getName(); ?></option>
+    <?php
+}
+?>
+</select>
+<?php //echo $catracine->getUrl(); ?>
+<select id="modeleVehicule" disabled="disabled" style="margin-bottom:8px; width:220px;" name="modeleVehicule" onchange="getOptions('typeVehicule', jQuery('#modeleVehicule').val());">
+    <option value="">Modèle</option>
+</select>
+
+<select id="typeVehicule" disabled="disabled" style="margin-bottom:8px; width:220px;" name="typeVehicule" onchange="getOptions('anneeVehicule', jQuery('#typeVehicule').val());">
+    <option value="">Type</option>
+</select>
+
+<select id="anneeVehicule" disabled="disabled" style="margin-bottom:8px; width:220px;" name="anneeVehicule" onchange="initBtn();">
+    <option value="">Année</option>
+</select>
+	<div id="rechvehvalid" class="rechveh-btn-off" onclick="">
+	    VALIDER
+	</div>
+	
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+   var vehicule = jQuery.cookie("vehicule");
+   if(vehicule) {
+       var cats = vehicule.split(',');
+       jQuery('#marqueVehicule option[value='+cats[0]+']').attr("selected", "selected");
+       populDrops('modeleVehicule', cats[0], cats[1]);
+       populDrops('typeVehicule', cats[1], cats[2]);
+       populDrops('anneeVehicule', cats[2], cats[3]);
+       //jQuery('#rechvehvalid').css('display','block');
+       initBtn();
+       
+   }
+});
+
+function initBtn() {
+    jQuery('#rechvehvalid').removeClass('rechveh-btn-off');
+    jQuery('#rechvehvalid').addClass('rechveh-btn');
+    jQuery('#rechvehvalid').click(function(){
+       gotoCategory(jQuery('#anneeVehicule').val());
+   });
+}
+
+function resetBtn() {
+    jQuery('#rechvehvalid').removeClass('rechveh-btn');
+    jQuery('#rechvehvalid').addClass('rechveh-btn-off');
+    jQuery('#rechvehvalid').click(function(){
+       
+   });
+}
+
+function populDrops(name, id, selectedid) {
+    jQuery.ajax({
+	type: "GET",
+	url: "<?php echo Mage::getBaseUrl(); ?>services/rechercheparvehicule/get_options.php",
+	data: "id="+id,
+	success: function(json){
+	    //alert('Selection de '+id+' - json : '+msg);
+	    var attribs = eval('(' + json + ')');
+	    jQuery.each(attribs, function(indexatt, valueatt) {
+		jQuery('#'+name).append(
+		    jQuery('<option></option>').val(indexatt).html(valueatt)
+		);
+	    });
+	    jQuery('#'+name).removeAttr('disabled');
+	    jQuery('#'+name+' option[value='+selectedid+']').attr("selected", "selected");
+	},
+	error: function(msg){
+	    alert("Aucun véhicule ne correspond à votre sélection actuelle.");
+	}
+    });
+}
+
+function getOptions(name, id) {
+    jQuery.ajax({
+	type: "GET",
+	url: "<?php echo Mage::getBaseUrl(); ?>services/rechercheparvehicule/get_options.php",
+	data: "id="+id,
+	success: function(json){
+	    //alert('Selection de '+id+' - json : '+msg);
+	    if (name == 'modeleVehicule') {
+		jQuery('#modeleVehicule').empty();
+		jQuery('#modeleVehicule').append(
+		    jQuery('<option></option>').val('').html('Modèle')
+		);
+		jQuery('#typeVehicule').empty();
+		jQuery('#typeVehicule').append(
+		    jQuery('<option></option>').val('').html('Type')
+		);
+		jQuery('#anneeVehicule').empty();
+		jQuery('#anneeVehicule').append(
+		    jQuery('<option></option>').val('').html('Année')
+		);
+		jQuery('#modeleVehicule').attr('disabled', true);
+		jQuery('#typeVehicule').attr('disabled', true);
+		jQuery('#anneeVehicule').attr('disabled', true);
+		//jQuery('#rechvehvalid').css('display','none');
+		resetBtn();
+	    }
+	    if (name == 'typeVehicule') {
+		jQuery('#typeVehicule').empty();
+		jQuery('#typeVehicule').append(
+		    jQuery('<option></option>').val('').html('Type')
+		);
+		jQuery('#anneeVehicule').empty();
+		jQuery('#anneeVehicule').append(
+		    jQuery('<option></option>').val('').html('Année')
+		);
+		jQuery('#typeVehicule').attr('disabled', true);
+		jQuery('#anneeVehicule').attr('disabled', true);
+		//jQuery('#rechvehvalid').css('display','none');
+		resetBtn();
+	    }
+	    if (name == 'anneeVehicule') {
+		jQuery('#anneeVehicule').empty();
+		jQuery('#anneeVehicule').append(
+		    jQuery('<option></option>').val('').html('Année')
+		);
+		jQuery('#anneeVehicule').attr('disabled', true);
+		//jQuery('#rechvehvalid').css('display','none');
+		resetBtn();
+		
+	    }
+	    //jQuery('#'+name).empty();
+	    var attribs = eval('(' + json + ')');
+	    jQuery.each(attribs, function(indexatt, valueatt) {
+		//alert(indexatt+' - '+valueatt);
+                jQuery('#'+name).append(
+		    //jQuery('<option></option>').val(indexatt).html(valueatt)
+                    '<option value="'+indexatt+'">'+valueatt+'</option>'
+		);
+	    });
+	    //jQuery('#'+name).removeAttr('disabled');
+	    jQuery('#'+name).attr('disabled', false);
+	},
+	error: function(msg){
+	    //alert("Aucun véhicule ne correspond à votre sélection actuelle.");
+	}
+    });
+}
+
+function gotoCategory(id) {
+    var vehicule = jQuery('#marqueVehicule').val()+','+jQuery('#modeleVehicule').val()+','+jQuery('#typeVehicule').val()+','+jQuery('#anneeVehicule').val();
+    jQuery.cookie("vehicule", vehicule, { expires: 365 });
+    jQuery.ajax({
+	type: "GET",
+	url: "<?php echo Mage::getBaseUrl(); ?>services/rechercheparvehicule/get_cat_url.php",
+	data: "id="+id,
+	success: function(url){
+	    jQuery(location).attr('href',url);
+	},
+	error: function(msg){
+	    //alert("Aucun véhicule ne correspond à votre sélection actuelle.");
+	}
+    });
+}
+</script>
+    </div>
+    
+</div>
+<div class="rechveh-lien">
+    <a href="<?php echo Mage::getBaseUrl(); ?>vehicule-absent">Votre véhicule n'est pas dans la liste ?</a>
+</div>

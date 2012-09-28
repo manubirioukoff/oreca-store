@@ -1,0 +1,114 @@
+<?php
+/*
+$catid = $_GET['catid'];
+if ($catid == 34 || $catid == 44 || $catid == 478) {
+	$categorytitle = "category-title-rouge";
+}
+else {
+	$categorytitle = "category-title-orange";
+}
+ */
+if (isset($_GET['catid'])) {
+    $catid = $_GET['catid'];
+}
+else {
+     $catid = 3;
+}
+$categorytitle = "category-title-orange";
+$_category = Mage::getModel('catalog/category')->load($catid);
+?>
+<div class="<?php echo $categorytitle; ?>">
+	<div class='category-title-text'>
+	<?php
+	if ($catid == 3) {
+		echo "Tous les univers";
+	}
+	else {
+		echo $_category->getName()." - Tous les univers";
+	}
+	?>
+	</div>
+</div>
+
+<?php
+
+//echo $_category->getName();
+
+$sql = "SELECT DISTINCT value FROM catalog_product_entity_varchar where attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'univers') AND store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $catid and store_id = 6)";
+$data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+$univtab = array();
+foreach ($data as $univers) {
+	if ($univers['value'] != ""){
+		$univdoublons = explode(",",$univers['value']);
+		foreach ($univdoublons as $doublon) {
+			if (!in_array($doublon, $univtab)) {
+				$univtab[] = $doublon;
+			}
+		}
+	}
+}
+
+$univers = array();
+$tabunivok = array('157','158','159','160','276','277','278','279','280','281','58557');
+//var_dump($univtab);
+foreach ($univtab as $idunivers) {
+    if (in_array($idunivers, $tabunivok)) {
+	$req = "SELECT option_id,value FROM eav_attribute_option_value where option_id = $idunivers AND store_id = 0";
+	$univers[] = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($req);
+    }
+}
+//$univers = array('157','158','159','160','276','277','278','279','280','281','58557');
+
+?>
+
+<?php
+     $descriptions = array(); // Descriptions des univers
+     $descriptions[276] = 'Affichez votre passion pour le sport automobile dans votre vie de tous les jours : Blousons, chaussures, t-shirts...';	//Sportswear
+     $descriptions[280] = 'La rubrique F1 comprend des accessoires Renault F1 mais aussi Ferrari, McLaren, des v&ecirc;tements, des tee shirts, des casquettes, des polos.'; //formule1
+     $descriptions[277] = 'Toute une gamme de produits autour de la Moto GP, des 24heures du Mans moto. Connectez-vous d&egrave;s maintenant.'; //moto
+     $descriptions[278] = 'Retrouvez le merchandising des teams et des pilotes de Rallye dans cette rubrique 100% passion.'; //rallye
+     $descriptions[279] = 'Tous les produits du circuit des 24 heures du Mans, du team Oreca, des chaussures et blousons de la marque Gulf.'; //endurance
+     $descriptions[281] = 'Fan du WTCC : retrouvez les articles de cette comp&eacute;tition unique ! En exergue, Seat Sport.'; //WTCC
+     $descriptions[160] = 'Tout l\'univers de la comp&eacute;tition et du sport automobile : accessoires, &eacute;quipement, Hans, combinaisons, bottines, arceaux...'; //Comp&eacute;tition
+     $descriptions[159] = 'Tout ce qui touche au karting : pi&egrave;ces, accessoires, casques et autres produits (Sparco, Lico).'; //Karting
+     $descriptions[157] = 'Tout l\'univers des voitures historiques de comp&eacute;tition : pi&egrave;ces, accessoires et autres produits.'; //VH
+     $descriptions[158] = 'Tout ce qu\'il vous faut en mati&egrave;re de pr&eacute;paration pour vos sorties circuit, vos journ&eacute;es trackdays ou votre tuning racing.'; //Tuning
+     $descriptions[58557] = 'Tous les &eacute;quipements et accessoires pour votre passion du 4x4.'; //4X4
+?>
+
+<div class="page">
+<?php
+foreach ($univers as $univ) {
+        $univok = array('157','158','159','160','276','277','278','279','280','281','58557');	if (in_array($univ[0]['option_id'],$univok)) {
+	$photouniv = Mage::getBaseUrl()."media/univers/".strtr($univ[0]['value'], " ", "-").".jpg";
+        if ($univ[0]['option_id'] == 160) { $photouniv = Mage::getBaseUrl()."media/univers/Competition.jpg"; }
+        if ($univ[0]['option_id'] == 157) { $photouniv = Mage::getBaseUrl()."media/univers/Vehicules-Historiques.jpg"; }
+	?>
+		<?php
+		if ($catid == 3) {
+			$debutlink = "<a href='".Mage::getBaseUrl()."store?univers=".$univ[0]['option_id']."' title='".$univ[0]['value']."'>";
+			$finlink = "</a>";
+			$linkuniv = $debutlink."".$univ[0]['value']."".$finlink;
+		}
+		else {
+			$debutlink = "<a href='".$_category->getUrl()."?univers=".$univ[0]['option_id']."' title='".$univ[0]['value']."'>";
+			$finlink = "</a>";
+			$linkuniv = $debutlink."".$univ[0]['value']."".$finlink;
+		}
+		?>
+		<div style="width:490px; height:206px; float:left; border:#D1D1D1 1px solid; margin:4px;" class="vignunivers-conteneur">
+			<div style="border-bottom:#D1D1D1 1px solid; text-align:center; width:490px; height:18px; color:#616060; font-weight:bold; text-transform:uppercase;" class="vignunivers-titre">
+				<?php echo $linkuniv; ?>
+			</div>
+			<div style="" class="vignunivers-photo">
+				<?php echo $debutlink; ?><img src="<?php echo $photouniv; ?>" border="0" /><?php echo $finlink; ?>
+			</div>
+			<div style="padding:5px;"><?php echo $descriptions[($univ[0]['option_id'])]; ?></div>
+		</div>
+
+<?php 	}
+}
+?>
+</div>
+

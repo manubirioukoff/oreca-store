@@ -1,0 +1,497 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Top menu for store
+ *
+ * @see Mage_Catalog_Block_Navigation
+ */
+?>
+<?php
+/**
+ * $this->renderCategoriesMenuHtml() supports optional arguments:
+ * int Level number for list item class to start from
+ * string Extra class of outermost list items
+ * string If specified wraps children list in div with this class
+ */
+?>
+<?php
+// Fonctions
+function getUniversByCategory($category)
+{
+    $sql = "SELECT DISTINCT value FROM catalog_product_entity_varchar where attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'univers') AND store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $category and store_id = 6)";
+    $data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+    $univtab = array();
+    foreach ($data as $univers) {
+            if ($univers['value'] != ""){
+                    $univdoublons = explode(",",$univers['value']);
+                    foreach ($univdoublons as $doublon) {
+                            if (!in_array($doublon, $univtab)) {
+                                    $univtab[] = $doublon;
+                            }
+                    }
+            }
+    }
+
+    $univers = array();
+    $univok = array('157','158','159','160','276','277','278','279','280','281','58557');
+    foreach ($univtab as $idunivers) {
+            if (in_array($idunivers, $univok)) {
+                    $req = "SELECT option_id,value FROM eav_attribute_option_value where option_id = $idunivers AND store_id = 0";
+                    $univers[] = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($req);
+            }
+    }
+    //return $univers;
+    return $univers;
+}
+
+function getMarquesByCategory($category)
+{
+            $sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov
+                            WHERE eaov.option_id = pei.value
+                            AND eaov.store_id = 0
+                            AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'global_marques')
+                            AND pei.store_id = 0
+                            AND entity_id IN (SELECT product_id FROM catalog_category_product_index AS cpi, catalog_product_entity_int AS pei2 where cpi.category_id = $category and cpi.store_id = 6 AND pei2.attribute_id = 273 AND pei2.value <> 2 AND cpi.product_id = pei2.entity_id)
+                            ORDER BY eaov.value ASC";
+            $data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+            return $data;
+    }
+
+function getPilotesByCategory($category)
+{
+            $sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov where eaov.option_id = pei.value AND eaov.store_id = 0 AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'global_pilote') AND pei.store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index AS cpi, catalog_product_entity_int AS pei2 where cpi.category_id = $category and cpi.store_id = 6 AND pei2.attribute_id = 273 AND pei2.value <> 2 AND cpi.product_id = pei2.entity_id) ORDER BY eaov.value ASC";
+            $data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+            return $data;
+}
+
+function getCircuitsByCategory($category)
+{
+        $sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov where eaov.option_id = pei.value AND eaov.store_id = 0 AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'circuit') AND pei.store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $category and store_id = 6) ORDER BY eaov.value ASC";
+        $data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+        return $data;
+}
+
+function getVehiculesByCategory($category)
+{
+        $sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov where eaov.option_id = pei.value AND eaov.store_id = 0 AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'vehicule') AND pei.store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $category and store_id = 6) ORDER BY eaov.value ASC";
+        $data = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+        return $data;
+}
+
+// Initialisation variables
+$habillement = Mage::getModel('catalog/category')->load(34);
+$accessoires = Mage::getModel('catalog/category')->load(44);
+$stages = Mage::getModel('catalog/category')->load(478);
+$eqpilote = Mage::getModel('catalog/category')->load(27);
+$voiture = Mage::getModel('catalog/category')->load(29);
+$mecanique = Mage::getModel('catalog/category')->load(103);
+$stand = Mage::getModel('catalog/category')->load(141);
+//$bonnesaffaires = Mage::getModel('catalog/category')->load(141);
+$bonnesaffaires = Mage::getModel('catalog/category')->load(1210);
+?>
+<ul id="menu_general">
+	<li>
+	    <a href="<?php echo $habillement->getUrl(); ?>">L'habillement</a>
+            <ul>
+		<li><span class="types">Types</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo $habillement->getUrl(); ?>">Tout l'habillement</a>
+                            <?php
+                                foreach ($habillement->getChildrenCategories() as $childCategory) {
+                                    if ($childCategory->getId() != '1262') {
+                                        ?>
+                         <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+                                        <?php
+                                    }
+                                }
+                                ?>
+                     </ul>
+                </li><li>
+                    <span class="univers">Univers</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $habillement->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(34) as $univers) {
+			    ?>
+                        <li><a href="<?php echo $habillement->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="marques">Marques</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>marques?catid=<?php echo $habillement->getId(); ?>">Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(34) as $marque) {
+			    ?>
+                        <li><a href="<?php echo $habillement->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="pilotes">Pilotes</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>global_pilote?catid=<?php echo $habillement->getId(); ?>">Tous les pilotes</a></li>
+		    <?php
+			foreach (getPilotesByCategory(34) as $pilote) {
+			    ?>
+                        <li><a href="<?php echo $habillement->getUrl(); ?>?global_pilote=<?php echo $pilote['option_id']; ?>"><?php echo $pilote['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li class="orange">
+                    <span>En ce moment</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/promotions-habillement">Bonnes affaires</a></li>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>l-habillement?dir=desc&order=entity_id">Nouveautés</a></li>
+                    </ul>
+		</li>
+            </ul>
+	</li><li id="menu_accessoires"><a href="<?php echo $accessoires->getUrl(); ?>" title="" >Les accessoires</a>
+            <ul>
+		<li><span class="types">Types</span>
+                    <ul>
+			<li><a class="bleu" class="bleu" href="#" title="" >Tous les accessoires</a></li>
+			<?php
+			foreach ($accessoires->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1263') {
+				?>
+                        <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="univers">Univers</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $accessoires->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(44) as $univers) {
+			    ?>
+                        <li><a href="<?php echo $accessoires->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="marques">Marques</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>marques?catid=<?php echo $accessoires->getId(); ?>">Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(44) as $marque) {
+			    ?>
+                        <li><a href="<?php echo $accessoires->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="pilotes">Pilotes</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>global_pilote?catid=<?php echo $accessoires->getId(); ?>">Tous les pilotes</a></li>
+		    <?php
+			foreach (getPilotesByCategory(44) as $pilote) {
+			    ?>
+                        <li><a href="<?php echo $accessoires->getUrl(); ?>?global_pilote=<?php echo $pilote['option_id']; ?>"><?php echo $pilote['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li class="orange">
+                    <span>En ce moment</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/promotions-accessoires">Bonnes affaires</a></li>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires?dir=desc&order=entity_id">Nouveautés</a></li>
+                    </ul>
+		</li>
+            </ul>
+	</li><li id="menu_pilotage"><a href="<?php echo $stages->getUrl(); ?>" title="" >Stages de pilotage</a>
+            <ul>
+		<li><span class="types">Types</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo $stages->getUrl(); ?>">Tous les stages de pilotage</a></li>
+			<?php
+			foreach ($stages->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1264') {
+				?>
+                        <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="univers">Circuits</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>circuit?catid=<?php echo $stages->getId(); ?>">Tous les circuits</a><li>
+			<?php
+			foreach (getCircuitsByCategory(478) as $univers) {
+			    ?>
+                        <li><a href="<?php echo $stages->getUrl(); ?>?circuit=<?php echo $univers['option_id']; ?>"><?php echo $univers['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="marques">Véhicule</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>vehicules?catid=<?php echo $stages->getId(); ?>">Tous les véhicules</a></li>
+                	<?php
+			foreach (getVehiculesByCategory(478) as $marque) {
+			    ?>
+                        <li><a href="<?php echo $stages->getUrl(); ?>?vehicule=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li>
+            </ul>
+	</li><li id="menu_pilote"><a href="<?php echo $eqpilote->getUrl(); ?>" title="" >Le pilote</a>
+            <ul>
+		<li><span class="types">Types</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo $eqpilote->getUrl(); ?>">Tout l'équipement pilote</a></li>
+			<?php
+			foreach ($eqpilote->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1264') {
+				?>
+                        <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="univers">Univers</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $eqpilote->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(27) as $univers) {
+			    ?>
+                        <li><a href="<?php echo $eqpilote->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li>
+                    <span class="marques">Marques</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>marques?catid=<?php echo $eqpilote->getId(); ?>">Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(27) as $marque) {
+			    ?>
+                        <li><a href="<?php echo $eqpilote->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                    </ul>
+		</li><li class="orange">
+                    <span>En ce moment</span>
+                    <ul>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/promotions-le-pilote">Bonnes affaires</a></li>
+                        <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-pilote?dir=desc&order=entity_id">Nouveautés</a></li>
+                    </ul>
+		</li>
+            </ul>
+	</li><li id="menu_voiture"><a href="<?php echo $voiture->getUrl(); ?>" title="" >La voiture</a>
+		<ul>
+                    <li><span class="types">Types</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo $voiture->getUrl(); ?>">Tout l'équipement du véhicule</a></li>
+			<?php
+			foreach ($voiture->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1265') {
+				?>
+                            <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+			</ul>
+                    </li><li>
+			<span class="univers">Univers</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $voiture->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(29) as $univers) {
+			    ?>
+                            <li><a href="<?php echo $voiture->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+			</ul>
+                    </li><li>
+			<span class="marques">Marques</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>marques?catid=<?php echo $voiture->getId(); ?>">Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(29) as $marque) {
+			    ?>
+                            <li><a href="<?php echo $voiture->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+			</ul>
+                    </li><li class="orange">
+			<span>En ce moment</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/promotions-la-voiture">Bonnes affaires</a></li>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule?dir=desc&order=entity_id">Nouveautés</a></li>
+			</ul>
+                    </li>
+                </ul>
+            </li><li id="menu_mecanique"><a href="<?php echo $mecanique->getUrl(); ?>" title="" >La mécanique</a>
+                <ul>
+                    <li><span class="types">Types</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo $mecanique->getUrl(); ?>">Toute la mécanique</a></li>
+			<?php
+			foreach ($mecanique->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1266') {
+				?>
+                            <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+			</ul>
+                    </li><li>
+			<span class="univers">Univers</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $mecanique->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(103) as $univers) {
+			    ?>
+                            <li><a href="<?php echo $mecanique->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+			</ul>
+                    </li><li>
+			<span class="marques">Marques</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>marques?catid=<?php echo $mecanique->getId(); ?>">Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(103) as $marque) {
+			    ?>
+                            <li><a href="<?php echo $mecanique->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+			</ul>
+                    </li><li class="orange">
+			<span>En ce moment</span>
+                        <ul>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/promotions-la-mecanique">Bonnes affaires</a></li>
+                            <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique?dir=desc&order=entity_id">Nouveautés</a></li>
+			</ul>
+                    </li>
+		</ul>
+            </li><li id="menu_atelier"><a href="<?php echo $stand->getUrl(); ?>" title="" >L'atelier</a>
+                    <ul>
+			<li><span class="types">Types</span>
+                            <ul>
+				<li><a class="bleu" class="bleu" href="#" title="" >Tout l'atelier</a></li>
+			<?php
+			foreach ($stand->getChildrenCategories() as $childCategory) {
+			    if ($childCategory->getId() != '1267') {
+				?>
+                                <li><a href="<?php echo $childCategory->getUrl(); ?>"><?php echo $childCategory->getName(); ?></a></li>
+				<?php
+			    }
+			}
+			?>
+                            </ul>
+			</li><li>
+                            <span class="univers">Univers</span>
+                            <ul>
+                                <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>univers?catid=<?php echo $stand->getId(); ?>">Tous les univers</a></li>
+			<?php
+			foreach (getUniversByCategory(141) as $univers) {
+			    ?>
+                                <li><a href="<?php echo $stand->getUrl(); ?>?univers=<?php echo $univers[0]['option_id']; ?>"><?php echo $univers[0]['value']; ?></a></li>
+			    <?php
+			}
+			?>
+				</ul>
+			</li><li>
+                            <span class="marques">Marques</span>
+                            <ul>
+				<li><a class="bleu" class="bleu" href="#" title="" >Toutes les marques</a></li>
+			<?php
+			foreach (getMarquesByCategory(141) as $marque) {
+			    ?>
+                                <li><a href="<?php echo $stand->getUrl(); ?>?global_marques=<?php echo $marque['option_id']; ?>"><?php echo $marque['value']; ?></a></li>
+			    <?php
+			}
+			?>
+                            </ul>
+			</li><li class="orange">
+                            <span>En ce moment</span>
+                            <ul>
+                                <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-stand/promotions-l-atelier">Bonnes affaires</a></li>
+                                <li><a class="bleu" href="<?php echo Mage::getBaseUrl(); ?>le-stand?dir=desc&order=entity_id">Nouveautés</a></li>
+                            </ul>
+			</li>
+                    </ul>
+            </li><li><a href="<?php echo Mage::getBaseUrl(); ?>choix-par-vehicule">Recherche par véhicule</a>
+            </li><li><a href="<?php echo Mage::getBaseUrl(); ?>sponsorship/points/sponsorship">Parrainage</a>
+        </li>
+</ul>
+<script type="text/javascript">
+ jQuery('#menu_general').ready(function()
+ {
+     jQuery('#menu_general').find('>li').each(function()
+     {
+        jQuery(this).hover(
+        function()
+        {
+            jQuery(this).children('ul').stop(true, true).delay('300').slideDown('300');
+        },
+        function()
+        {
+            jQuery(this).children('ul').stop(true, true).hide();
+        }
+        );
+     });
+ });
+ jQuery(document).ready(function()
+ {
+     jQuery('#menu_general>li>ul').css('display', 'none');
+ });
+ 
+</script>

@@ -1,0 +1,10 @@
+<?php
+$category = Mage::getModel('catalog/category')->load(34);
+$productCollection = Mage::getResourceModel('catalog/product_collection')
+                           ->addCategoryFilter($category);
+
+foreach($productCollection as $product) {
+    echo $product->getId()."<br />";
+}
+
+?>

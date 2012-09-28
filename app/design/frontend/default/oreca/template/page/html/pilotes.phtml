@@ -1,0 +1,55 @@
+<?php
+if (isset($_GET['catid'])) {
+    $catid = $_GET['catid'];
+}
+else {
+     $catid = 3;
+}
+$categorytitle = "category-title-orange";
+$_category = Mage::getModel('catalog/category')->load($catid);
+?>
+
+<div class="<?php echo $categorytitle; ?>">
+	<div class='category-title-text'>
+	<?php
+	if ($catid == 3) {
+		echo "Tous les pilotes";
+	}
+	else {
+		echo $_category->getName()." - Tous les pilotes";
+	}
+	?>
+	</div>
+</div>
+
+<?php
+$sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov where eaov.option_id = pei.value AND eaov.store_id = 0 AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'global_pilote') AND pei.store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $catid and store_id = 6) ORDER BY eaov.value ASC";
+$pilotes = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+//var_dump($data);
+?>
+<div class="page">
+<?php
+foreach ($pilotes as $pilote) {
+	//$photopilote = strtr($pilote['value'], " ", "-");
+	$nompilote = strtr($pilote['value'], " ", "-");
+	$photopilote = Mage::getBaseUrl().'media/pilotes/'.$nompilote.'.jpg';
+	$debutlink = "<a href='".$_category->getUrl()."?global_pilote=".$pilote['option_id']."' title='".$pilote['value']."'>";
+	$finlink = "</a>";
+	$linkpilote = $debutlink."".$pilote['value']."".$finlink;
+?>
+
+	<a href="<?php echo $_category->getUrl(); ?>?global_pilote=<?php echo $pilote['option_id']; ?>" title="<?php echo $pilote['value']; ?>">
+	<div style="width:138px; height:157px; float:left; border:#D1D1D1 1px solid; margin:12px;" class="vignpilote-conteneur">
+		<div style="border-bottom:#D1D1D1 1px solid; text-align:center; width:138px; height:18px; color:#616060; font-weight:bold; text-transform:uppercase;" class="vignpilote-titre">
+			<?php echo $linkpilote; ?>
+		</div>
+		<div style="" class="vignpilote-photo">
+			<?php echo $debutlink; ?><img src="<?php echo $photopilote; ?>" border="0" width="138px" height="138px" /><?php echo $finlink; ?>
+		</div>
+	</div>
+	</a>
+<?php
+}
+?>
+</div>

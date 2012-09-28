@@ -1,0 +1,152 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+?>
+<?php
+
+//$requrl = Mage::getBaseUrl()."services/fbsdk/Facebook.php";
+// Désactivation recuperation nb fans, trop lent
+
+$requrl = '/var/www/magento/services/fbsdk/Facebook.php';
+require_once($requrl);
+$facebook = new Facebook(array(
+    'appId'  => '314580805252369',
+    'secret' => '3ffb43386544774ba209c2d3fdb4bd26',
+    'cookie' => true,
+));
+$result = $facebook->api(array(
+    'method' => 'fql.query',
+    'query' => 'select fan_count from page where page_id = 282597717783;'
+));
+$fb_fans = $result[0]['fan_count'];
+
+//$fb_fans = 10622;
+?>
+<div class="over-header">
+    <div class="page">
+	<div class="over-header-claim">
+	    <?php echo $this->__('The Motorsport store'); ?></a>
+	</div>
+	<div class="over-header-content-fb">
+	    <a href="http://www.facebook.com/Oreca.fr"><img style="margin-top:2px;" src="<?php echo $this->getSkinUrl('images/fb_like_transp.png'); ?>" /> <?php echo $fb_fans; ?> <?php echo $this->__('people'); ?></a>
+	</div>
+	<div class="over-header-content">
+	    <span style="color:#FA7206">></span> <span class="lien_js_header" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>faq/'"><?php echo $this->__('Help'); ?></span>
+	</div>
+	<div class="over-header-content">
+	    <span style="color:#FA7206">></span> <span class="lien_js_header" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>newsletter/manage/'"><?php echo $this->__('Subscribe to our newsletter'); ?></span>
+	</div>
+	<div class="over-header-content">
+	    <span style="color:#FA7206">></span> Contact : <span class="lien_js_header" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>contacts'"><?php echo $this->__('By Email'); ?></span> - <?php echo $this->__('Phone : France : 0 494 885 790 - International : +33 494 885 790'); ?>
+           <!-- <span style="color:#FA7206">></span> Contact : <a href="<?php echo Mage::getBaseUrl(); ?>contacts"><?php echo $this->__('By Email'); ?></a> - <?php echo $this->__('Phone : France : 0 494 885 790 - International : +33 494 885 790'); ?> -->
+	</div>
+	
+    </div>
+</div>
+<div class="header-container">
+    <div class="header">
+        <?php if ($this->getIsHomePage()):?>
+ 	<h1 class="logo">
+	    <a href="<?php echo $this->getUrl('') ?>" title="Retour à l'accueil" class=""><img src="<?php echo $this->getLogoSrc() ?>" alt="Oreca-store - La boutique de sport automobile" /></a>
+        </h1>       
+        <?php else : ?>
+	<div class="logo">
+	    <a href="<?php echo $this->getUrl('') ?>" title="Retour à l'accueil" class=""><img src="<?php echo $this->getLogoSrc() ?>" alt="Oreca-store - La boutique de sport automobile" /></a>
+        </div>
+        <?php endif; ?>
+	<div class="search-container">
+	    <?php echo $this->getChildHtml('topSearch') ?>
+	</div>
+	<!--<a href="<?php echo $this->helper('customer')->getLoginUrl();?>">-->
+	<div class="moncompte-container">
+	    <div class="moncompte-picto">
+		
+	    </div>
+	    <div class="moncompte-texte">
+		<strong style="font-size:13px; text-shadow : 0.1em 0.1em 0.3em #fff"><?php echo $this->__('My account'); ?></strong><br />
+		<?php
+		if ($this->helper('customer')->isLoggedIn() == 1) { ?>
+		    <div class="lien-deco"><span style="color:#FA7206">></span> <a href="<?php echo Mage::getBaseUrl(); ?>customer/account">Accéder</a></div>
+		    <div class="lien-deco"><span style="color:#FA7206">></span> <a href="<?php echo $this->helper('customer')->getLogoutUrl();?>"><?php echo $this->__('Logout'); ?></a></div>
+		<?php }
+		else {
+		?>
+		   <div class="lien-deco"><span style="color:#FA7206">></span> <span class="lien_js_header" onclick="window.location.href ='<?php echo $this->helper('customer')->getLoginUrl();?>'"><?php echo $this->__('Login'); ?></span></div>
+		<?php
+		}
+		?>
+	    </div>
+	</div>
+	<!--</a>-->
+	<!--<a class="lien-noir" href="<?php echo $this->getUrl('checkout/cart') ?>">-->
+	<div class="panier-container">
+	    <div class="panier-picto">
+
+	    </div>
+	    <div class="panier-texte">
+		<a class="lien-noir" href="<?php echo $this->getUrl('checkout/cart') ?>">
+		<strong style="font-size:13px; text-shadow : 0.1em 0.1em 0.3em #fff">Mon panier</strong><br />
+		<?php
+		$_cartQty = $this->helper('checkout/cart')->getSummaryCount();
+		if ($_cartQty > 0) {
+		    echo $_cartQty." ".$this->__('item(s)')."<br />";
+		    $grandTotal = $this->helper('checkout/cart')->getQuote()->getGrandTotal();
+		    echo '<span class="prix_panier_header">' . $this->helper('core')->formatPrice($grandTotal, false) . '</span>';
+		} else {
+		    echo $this->__('You have no items in your shopping cart.');
+		}
+		?>
+		</a>
+	    </div>
+	</div>
+	<!--</a>-->
+    </div>
+</div>
+<?php echo $this->getChildHtml('topMenu') ?>
+
+<?php
+/*
+<div class="header-container">
+    <div class="header">
+        <?php if ($this->getIsHomePage()):?>
+        <h1 class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a></h1>
+        <?php else:?>
+        <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a>
+        <?php endif?>
+        <div class="quick-access">
+            <?php echo $this->getChildHtml('topSearch') ?>
+            <p class="welcome-msg"><?php echo $this->getWelcome() ?> <?php echo $this->getAdditionalHtml() ?></p>
+            <?php echo $this->getChildHtml('topLinks') ?>
+            <?php echo $this->getChildHtml('store_language') ?>
+        </div>
+        <?php echo $this->getChildHtml('topContainer'); ?>
+    </div>
+</div>
+<?php echo $this->getChildHtml('topMenu') ?>
+*/
+?>

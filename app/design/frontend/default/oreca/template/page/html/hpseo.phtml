@@ -1,0 +1,589 @@
+<?php
+// Equipement pilote
+$cateqpilote = Mage::getModel('catalog/category')->load(27);
+$eqpilote = Mage::getResourceModel('catalog/product_collection')
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+	    ->addAttributeToSelect('name')
+	    ->addAttributeToSelect('sku')
+	    ->addAttributeToSelect('image')
+            ->addAttributeToSelect('global_marques')
+	    ->addAttributeToSelect('price')
+	    ->addAttributeToSelect('typeproduit')
+	    ->addAttributeToSelect('parent_enfant')
+	    ->addAttributeToSelect('global_op_mkg')
+	    ->addAttributeToSelect('produitstar')
+	    ->addCategoryFilter($cateqpilote)
+	    ->addAttributeToFilter('status',1)
+	    ->addAttributeToFilter('produitstar',1)
+	    ->addAttributeToFilter('parent_enfant',556)
+	    ;
+$eqpilote->getSelect()->order(new Zend_Db_Expr('RAND()'));
+$eqpilote->setPageSize(4);
+
+// Equipement auto
+$cateqauto = Mage::getModel('catalog/category')->load(29);
+$eqauto = Mage::getResourceModel('catalog/product_collection')
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+	    ->addAttributeToSelect('name')
+	    ->addAttributeToSelect('sku')
+	    ->addAttributeToSelect('image')
+            ->addAttributeToSelect('global_marques')
+	    ->addAttributeToSelect('price')
+	    ->addAttributeToSelect('typeproduit')
+	    ->addAttributeToSelect('parent_enfant')
+	    ->addAttributeToSelect('global_op_mkg')
+	    ->addAttributeToSelect('produitstar')
+	    ->addCategoryFilter($cateqauto)
+	    ->addAttributeToFilter('status',1)
+	    ->addAttributeToFilter('produitstar',1)
+	    ->addAttributeToFilter('parent_enfant',556)
+	    ;
+$eqauto->getSelect()->order(new Zend_Db_Expr('RAND()'));
+$eqauto->setPageSize(4);
+
+// Mécanique auto
+$catmeca = Mage::getModel('catalog/category')->load(103);
+$meca = Mage::getResourceModel('catalog/product_collection')
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+	    ->addAttributeToSelect('name')
+	    ->addAttributeToSelect('sku')
+	    ->addAttributeToSelect('image')
+            ->addAttributeToSelect('global_marques')
+	    ->addAttributeToSelect('price')
+	    ->addAttributeToSelect('typeproduit')
+	    ->addAttributeToSelect('parent_enfant')
+	    ->addAttributeToSelect('global_op_mkg')
+	    ->addAttributeToSelect('produitstar')
+	    ->addCategoryFilter($catmeca)
+	    ->addAttributeToFilter('status',1)
+	    ->addAttributeToFilter('produitstar',1)
+	    ->addAttributeToFilter('parent_enfant',556)
+	    ;
+$meca->getSelect()->order(new Zend_Db_Expr('RAND()'));
+$meca->setPageSize(4);
+
+// Merchandising
+$catmerch = Mage::getModel('catalog/category')->load(34);
+$merch = Mage::getResourceModel('catalog/product_collection')
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+	    ->addAttributeToSelect('name')
+	    ->addAttributeToSelect('sku')
+	    ->addAttributeToSelect('image')
+            ->addAttributeToSelect('global_marques')
+	    ->addAttributeToSelect('price')
+	    ->addAttributeToSelect('typeproduit')
+	    ->addAttributeToSelect('parent_enfant')
+	    ->addAttributeToSelect('global_op_mkg')
+	    ->addAttributeToSelect('produitstar')
+	    ->addCategoryFilter($catmerch)
+	    ->addAttributeToFilter('status',1)
+	    ->addAttributeToFilter('produitstar',1)
+	    ->addAttributeToFilter('parent_enfant',556)
+	    ;
+$merch->getSelect()->order(new Zend_Db_Expr('RAND()'));
+$merch->setPageSize(4);
+
+//echo "eq pilote<br />";
+//foreach ($eqpilote as $prod) {
+//    echo $prod->getName()."<br />";
+//}
+//echo "<br /><br />";
+//echo "eq auto<br />";
+//foreach ($eqauto as $prod) {
+//    echo $prod->getName()."<br />";
+//}
+//echo "<br /><br />";
+//echo "meca<br />";
+//foreach ($meca as $prod) {
+//    echo $prod->getName()."<br />";
+//}
+//echo "<br /><br />";
+//echo "merch<br />";
+//foreach ($merch as $prod) {
+//    echo $prod->getName()."<br />";
+//}
+
+?>
+<div style="clear:both; height:10px;"></div>
+<div class="hpproducts-passion">
+    <div class="hpseo-container-left">
+	<div class="hpseo-titre">
+	    <h2>EQUIPEMENT PILOTE AUTO</h2>
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/combinaisons"><h3><span style="color:#FF6F0C">> </span>Combinaison pilote</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/protections-pilote"><h3><span style="color:#FF6F0C">> </span>Protection pilote</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/casques"><h3><span style="color:#FF6F0C">> </span>Casque pilote</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/gants"><h3><span style="color:#FF6F0C">> </span>Gants pilote</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/bottines"><h3><span style="color:#FF6F0C">> </span>Bottines</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/liaisons-radios"><h3><span style="color:#FF6F0C">> </span>Liaison radio</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur-der">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/accessoires-pilote"><h3><span style="color:#FF6F0C">> </span>Housse casque</h3></a>
+	</div>
+	<?php
+	foreach($eqpilote as $prod) {
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(220, 220);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+
+	?>
+
+	<div class="hpseo-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+	<div class="hpseo-btn">
+	    <a href="<?php echo Mage::getBaseUrl(); ?>le-pilote">Tous les équipements du pilote</a>
+	</div>
+    </div>
+</div>
+<div class="hpproducts-pratique">
+    <div class="hpseo-container-right">
+	<div class="hpseo-titre">
+	    <h2>EQUIPEMENT AUTO</h2>
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/baquets"><h3><span style="color:#FF6F0C">> </span>Siège baquet</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/jantes-aluminium"><h3><span style="color:#FF6F0C">> </span>Jantes auto</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/volants"><h3><span style="color:#FF6F0C">> </span>Volant sport</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur" style="width:180px;">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/camera"><h3><span style="color:#FF6F0C">> </span>Caméra embarquée voiture</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/harnais"><h3><span style="color:#FF6F0C">> </span>Harnais auto</h3></a>
+	     <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/securite"><h3><span style="color:#FF6F0C">> </span>Arceaux</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur-der" style="width:120px;">
+	   <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/pneumatiques"><h3><span style="color:#FF6F0C">> </span>Pneu sport</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule/eclairage"><h3><span style="color:#FF6F0C">> </span>Phare auto</h3></a></h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-pilote/casques"><h3><span style="color:#FF6F0C">> </span>Casque pilote</h3></a>
+	</div>
+	<?php
+	foreach($eqauto as $prod) {
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(220, 220);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+
+	?>
+
+	<div class="hpseo-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+	<div class="hpseo-btn">
+	    <a href="<?php echo Mage::getBaseUrl(); ?>le-vehicule">Tous les équipements automobile</a>
+	</div>
+    </div>
+</div>
+<div style="clear:both; height:5px;"></div>
+<div class="hpproducts-passion">
+    <div class="hpseo-container-left">
+	<div class="hpseo-titre">
+	    <h2>MECANIQUE AUTO</h2>
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/echappement"><h3><span style="color:#FF6F0C">> </span>Echappement auto</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/freinage/plaquettes"><h3><span style="color:#FF6F0C">> </span>Plaquette de frein</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/electricite/circuit-electrique/coupe-circuit"><h3><span style="color:#FF6F0C">> </span>Coupe circuit voiture</h3></a>
+
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/transmission/embrayage-metallique/disque"><h3><span style="color:#FF6F0C">> </span>Disque embrayage</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/durites"><h3><span style="color:#FF6F0C">> </span>Durites silicone</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique/lubrifiants"><h3><span style="color:#FF6F0C">> </span>Huile compétition</h3></a>
+	</div>
+	<?php
+	foreach($meca as $prod) {
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(220, 220);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+
+	?>
+
+	<div class="hpseo-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+	<div class="hpseo-btn">
+	    <a href="<?php echo Mage::getBaseUrl(); ?>la-mecanique">Toute la mécanique automobile</a>
+	</div>
+    </div>
+</div>
+<div class="hpproducts-pratique">
+    <div class="hpseo-container-right">
+	<div class="hpseo-titre">
+	    <h2>VETEMENTS SPORT AUTO</h2>
+	</div>
+	<div class="hpseo-cats-conteneur">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/t-shirts"><h3><span style="color:#FF6F0C">> </span>T-Shirt voiture</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/chemises"><h3><span style="color:#FF6F0C">> </span>Chemise voiture</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/polos"><h3><span style="color:#FF6F0C">> </span>Polo auto</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur" style="width:160px;">
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/sweats"><h3><span style="color:#FF6F0C">> </span>Sweat auto</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/blousons"><h3><span style="color:#FF6F0C">> </span>Blouson auto</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/chaussures"><h3><span style="color:#FF6F0C">> </span>Chaussures auto</h3></a>
+	</div>
+	<div class="hpseo-cats-conteneur-der">
+	   <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/casquettes"><h3><span style="color:#FF6F0C">> </span>Casquette auto</h3></a>
+	    <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>l-habillement/ceintures-echarpes"><h3><span style="color:#FF6F0C">> </span>Echarpe et Ceinture auto</h3></a>
+	</div>
+	<?php
+	foreach($merch as $prod) {
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(220, 220);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+
+	?>
+
+	<div class="hpseo-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+	<div class="hpseo-btn">
+	    <a href="<?php echo Mage::getBaseUrl(); ?>l-habillement">Tous les vêtements sport auto</a>
+	</div>
+    </div>
+</div>
+<div style="clear:both; height:10px;"></div>
+<div class="hpseo-autrescats-container">
+    <div class="hpseo-autrescats-titre">
+	<h2>ACCESSOIRES SPORT AUTO</h2>
+    </div>
+    <div class="hpseo-autrescats-contenu first_angle">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/livres-dvd">Livre et DVD sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/jouets">Jouet sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/miniatures">Miniature sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/bagages">Bagage sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/montres">Montre sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/montres">Lunettes sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/pour-la-maison">Accessoire Bureau sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires/hi-tech">Avertisseur et Camera sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu last_angle">
+	<a class="hpitemtous" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires">Tous les accessoires sport auto</a>
+    </div>
+</div>
+<div class="hpseo-autrescats-container">
+    <div class="hpseo-autrescats-titre">
+	<h2>STAGE PILOTAGE VOITURE</h2>
+    </div>
+
+
+    <div class="hpseo-autrescats-contenu first_angle">
+	 <a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage/baptemes">Bapteme automobile</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage?vehicule=65224">Stage pilotage Ferrari 458</a><br>
+
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage?vehicule=55003">Stage pilotage Audi R8</a><br>
+
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage?vehicule=55007">Stage pilotage Lamborghini</a><br>
+
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage?vehicule=55009">Stage pilotage Porsche</a><br>
+
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage/journees-circuits">Journée circuit</a><br>
+
+    </div>
+    <div class="hpseo-autrescats-contenu last_angle">
+	<a class="hpitemtous" href="<?php echo Mage::getBaseUrl(); ?>idees-cadeaux/stage-pilotage">Tous les stages de pilotage auto</a>
+    </div>
+</div>
+<div class="hpseo-autrescats-container">
+    <div class="hpseo-autrescats-titre">
+	<h2>OUTILLAGE SPORT AUTO</h2>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="hpseo-autrescats-contenu first_angle">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/structures-stand">Structure sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/eclairage-d-appoint">Eclairage sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/levage">Levage sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/manutention">Manutention sport auto</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/equipement-mecano">Equipement mécano</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/outillage">Outillage mécanicien</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/outillage-pneus">Outillage pneus</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu">
+	<a class="hpitemnormal" href="<?php echo Mage::getBaseUrl(); ?>le-stand/panneautage">Panneautage</a><br>
+    </div>
+    <div class="hpseo-autrescats-contenu last_angle">
+	 <a class="hpitemtous" href="<?php echo Mage::getBaseUrl(); ?>le-stand">Tout l'outillage sport auto</a>
+    </div>
+</div>
+<div style="clear:both; height:10px;"></div>

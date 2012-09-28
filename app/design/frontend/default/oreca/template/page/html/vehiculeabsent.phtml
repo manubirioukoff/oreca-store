@@ -1,0 +1,101 @@
+<script type="text/javascript" defer=true>//<![CDATA[
+
+function layerNewsletter(){
+
+	//createNewsletterCookie();
+	$('layerNewsletterOverlay').setStyle({display: 'block'});
+	$('layerNewsletterBox').setStyle({display: 'block'});
+
+	$('layerNewsletterOverlay').setOpacity(0);
+	$('layerNewsletterOverlay').setStyle({visibility: 'visible'});
+	new Effect.Opacity('layerNewsletterOverlay', {from: 0.0, to: 0.7, duration: 0.8});
+
+	$('layerNewsletterBox').setOpacity(0);
+	$('layerNewsletterBox').setStyle({visibility: 'visible'});
+	new Effect.Opacity('layerNewsletterBox', {from: 0.0, to: 1.0,	duration: 0.8});
+}
+
+function layerNewsletterClose(){
+	resetVehicule();
+	$('layerNewsletterOverlay').fade({ duration: 0.8 });
+	$('layerNewsletterBox').fade({ duration: 0.8 });
+	$('layerNewsletterConfirmBox').fade({ duration: 0.8 });
+}
+
+function afterSend(){
+	//var merci = eval('('+transport.responseText+')');
+	//alert(merci);
+	resetVehicule();
+	$('layerNewsletterOverlay').fade({ duration: 0.8 });
+	$('layerNewsletterBox').fade({ duration: 0.8 });
+	$('layerNewsletterConfirmBox').fade({ duration: 0.8 });
+}
+
+function layerNewsletterBoxSend(){
+	var vehicule = $('layerNewsletterBoxInput').getValue();
+	var nom = $('layerNewsletterNomInput').getValue();
+	var prenom = $('layerNewsletterPrenomInput').getValue();
+	var email = $('layerNewsletterEmailInput').getValue();
+	var telephone = $('layerNewsletterTelephoneInput').getValue();
+	new Ajax.Request('http://www.oreca-store.com/services/choixvehiculenew/ajax_sendmail.php', {
+			method: 'post',
+			parameters:{vehicule: vehicule, nom: nom, prenom: prenom, email: email, telephone: telephone},
+			onSuccess: afterSend
+		});
+}
+
+
+//]]></script>
+
+Afin de mieux répondre à vos besoins, merci de nous indiquer ci-dessous vos coordonnées email ou téléphonique et la marque, le modèle, le type et l'année de votre véhicule afin que nous l'intégrions prochainement.
+<br /><br />
+Une fois cette fenêtre fermée, vous pourrez trouver vos articles via la référence fournisseur notamment.
+<br /><br />
+
+<form action="javascript:layerNewsletterBoxSend()" method="get">
+    <div style="text-align: center; margin:0 auto; width:450px;">
+    <table cellspacing="4" cellpadding="4" align="center" style="line-height:2.5em;">
+	<tr>
+	    <td>Nom :</td>
+	    <td>
+		<input type="text" id="layerNewsletterNomInput" style="width: 300px; margin-left:15px; border: 1px solid rgb(217, 217, 217); color: rgb(133, 133, 133); font-size: 14px;" />
+	    </td>
+	</tr>
+	<tr>
+	    <td>Prénom :</td>
+	    <td>
+		<input type="text" id="layerNewsletterPrenomInput" style="width: 300px; margin-left:15px; border: 1px solid rgb(217, 217, 217); color: rgb(133, 133, 133); font-size: 14px;" />
+	    </td>
+	</tr>
+	<tr>
+	    <td><strong>Adresse Email :</strong></td>
+	    <td>
+		<input type="text" id="layerNewsletterEmailInput" style="width: 300px; margin-left:15px; border: 1px solid rgb(217, 217, 217); color: rgb(133, 133, 133); font-size: 14px;" />
+	    </td>
+	</tr>
+	<tr>
+	    <td>Téléphone :</td>
+	    <td>
+		<input type="text" id="layerNewsletterTelephoneInput" style="width: 300px; margin-left:15px; border: 1px solid rgb(217, 217, 217); color: rgb(133, 133, 133); font-size: 14px;" />
+	    </td>
+	</tr>
+	<tr>
+	    <td><strong>Votre véhicule :</strong></td>
+	    <td>
+		<input type="text" id="layerNewsletterBoxInput" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" style="margin-left:15px; width: 300px; border: 1px solid rgb(217, 217, 217); color: rgb(133, 133, 133); font-size: 14px;" />
+    </td>
+	</tr>
+	<tr>
+	    <td colspan="2">
+		<div style="float:right">
+		    <input id="layerNewsletterBoxButton" type="submit" value="Valider" style="background:url(http://www.oreca-store.com/bannieres/layer-newsletter/layerNewsletterBoxButton.gif) no-repeat; width:170px; height:31px; border:0; cursor:pointer; font-size: 0; display:block; line-height: 0;"/>
+		</div>
+	    </td>
+	</tr>
+    </table>
+</div>
+        <div style="font-size:14px; text-align: center;">
+	    <br /><br />
+	    <strong>Contactez nous ! </strong><strong>Par téléphone :</strong> 0 494 885 790 - <strong>Par email :</strong> <a href="http://www.oreca-store.com/contact/">Cliquez ici</a></div>
+</form>
+

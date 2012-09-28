@@ -1,0 +1,313 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<div class="footer-container">
+    <div class="footer-icones-container">
+	<div class="page">
+	    <div class="footer-reassur-container">
+		<div class="footer-reassur">
+		    <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>contacts/'">
+			<div class="footer-reassur-icon-service">
+			    <div class="footer-reassur-text">
+				Un service client à votre écoute
+			    </div>
+			</div>
+		    </span>
+		</div>
+		<div class="footer-reassur">
+		    <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>livraison-24h/'">
+			<div class="footer-reassur-icon-livraison">
+			    <div class="footer-reassur-text">
+				Livraison<br />en 24H
+			    </div>
+			</div>
+		    </span>
+		</div>
+		<div class="footer-reassur">
+		   <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>echange-garanti/'">
+			<div class="footer-reassur-icon-echange">
+			    <div class="footer-reassur-text">
+				Echange<br />garanti
+			    </div>
+			</div>
+		    </span>
+		</div>
+		<div class="footer-reassur">
+		    <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>facilite-paiement/'">
+			<div class="footer-reassur-icon-facilite">
+			    <div class="footer-reassur-text">
+				Facilité de paiement
+			    </div>
+			</div>
+		    </span>
+		</div>
+		<div class="footer-reassur">
+		    <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>paiement-securise/'">
+			<div class="footer-reassur-icon-paiement">
+			    <div class="footer-reassur-text">
+				Paiement<br />sécurisé
+			    </div>
+			</div>
+		    </span>
+		</div>
+		<div class="footer-reassur">
+		    <span class="lien_js_footer" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>satisfait-rembourse/'">
+			<div class="footer-reassur-icon-satisfait">
+			    <div class="footer-reassur-text">
+				Satisfait ou remboursé
+			    </div>
+			</div>
+		    </span>
+		</div>
+	    </div>
+	    <div class="footer-partage-container">
+		<a href="http://www.facebook.com/pages/Oreca/282597717783" target="_blank">
+		    <div class="footer-partage-fb"></div>
+		</a>
+		<a href="https://plus.google.com/118058312319579704656?prsrc=3" style="text-decoration:none;" target="_blank">
+		    <div class="footer-partage-gplus"></div>
+		</a>
+		<a href="http://twitter.com/OrecaStore" target="_blank">
+		    <div class="footer-partage-twitter"></div>
+		</a>
+		<a href="http://www.youtube.com/orecatv" target="_blank">
+		    <div class="footer-partage-youtube"></div>
+		</a>
+	    </div>
+	    <div class="footer-newsletter-container">
+		<div class="footer-newsletter">
+		    <div class="footer-newsletter-titre">
+			NEWSLETTER
+		    </div>
+		    <div class="footer-newsletter-contenu">
+			Recevez nos meilleures offres<br /><br />
+			<form id="newsletter-validate-detail" method="post" action="<?php echo Mage::getBaseUrl(); ?>newsletter/subscriber/new/">
+			    <input type="text" onblur="if(this.value=='')this.value=this.defaultValue;" onfocus="if(this.value==this.defaultValue)this.value='';" value="Votre adresse e-mail..." class="input-text required-entry validate-email" id="newsletter" name="email">
+			    <button type="submit" class="footer-newsletter-btn"><span>VALIDER</span></button>
+			</form>
+			<script type="text/javascript">
+			    var newsletterSubscriberFormDetail = new VarienForm('newsletter-validate-detail');
+			</script>
+		    </div>
+		</div>
+	    </div>
+	    <div class="footer-service-container">
+		<div class="footer-newsletter">
+		    <div class="footer-newsletter-titre">
+			SERVICE CLIENT
+		    </div>
+		    <div class="footer-newsletter-contenu">
+			Question ? Conseil ?<br />
+			Vous cherchez un produit ?<br />
+			Contactez nous...<br />
+			<a href="<?php echo Mage::getBaseUrl(); ?>contacts"><button class="footer-newsletter-btn"><span>PAR EMAIL</span></button></a>
+		    </div>
+		</div>
+	    </div>
+	</div>
+    </div>
+    <div class="footer-grey-container">
+	<div class="page">
+	    <div class="footer-grey-titre">
+		Espace client
+	    </div>
+	    <div class="footer-grey-titre">
+		ORECA
+	    </div>
+	    <div class="footer-grey-titre" style="border-right:none;">
+		Autres
+	    </div>
+	</div>
+    </div>
+    <div class="footer-black-container">
+	<div class="page">
+	    <div class="footer-black-contenu" style="border-left:none;">
+		<span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>contacts'">Contact par email</span> |
+		<a href="<?php echo Mage::getBaseUrl(); ?>1ere-visite">1ère visite</a> |
+		<a href="<?php echo Mage::getBaseUrl(); ?>faq/">FAQ</a> |
+		<span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>newsletter/manage/'">Newsletter</span> |
+		<?php
+		if ($this->helper('customer')->isLoggedIn() == 1) { ?>
+                <span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>customer/account/'">Mon compte</span> | <br />
+		<a href="<?php echo Mage::getBaseUrl(); ?>customer/account/logout/">Se déconnecter</a>
+                <?php }
+		else {
+		?>
+                <span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>customer/account/create/'"><?php echo $this->__('Créer un compte'); ?></span> | <br />
+                <span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>/customer/account/forgotpassword/'"><?php echo $this->__('Mot de passe oublié'); ?></span>
+                <?php
+		}
+		?>
+            
+            </div>
+	    <div class="footer-black-contenu">
+		<a href="<?php echo Mage::getBaseUrl(); ?>notre-entreprise/">Notre&nbsp;entreprise</a> |
+		<a href="<?php echo Mage::getBaseUrl(); ?>nos-partenaires/">Nos&nbsp;partenaires</a> | 
+		<a href="<?php echo Mage::getBaseUrl(); ?>nos-sites/">Nos&nbsp;sites</a> |
+		<a href="<?php echo Mage::getBaseUrl(); ?>marques/">Nos marques</a> |<br />
+		<a href="<?php echo Mage::getBaseUrl(); ?>univers/">Nos univers</a> |
+		Nouveauté - <a href="<?php echo Mage::getBaseUrl(); ?>OMP/">OMP</a>
+	    </div>
+	    <div class="footer-black-contenu" style="border-right:none;">
+		<span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>mentions-legales/'">Mentions&nbsp;légales</span> |
+		<span class="lien_js_footer2" onclick="window.location.href ='<?php echo Mage::getBaseUrl(); ?>CGV/'">Conditions&nbsp;Générales&nbsp;de&nbsp;Vente</span>
+	    </div>
+	</div>
+    </div>
+    <div class="footer-securise-container">
+	<div class="page" style="width:700px;">
+	    <div class="footer-securise">
+		<div class="footer-securise-fevad">
+		    Membre de la Fédération du E-Commerce et de la Vente A Distance |
+		</div>
+		<div class="footer-securise-paiement">
+		    Paiement sécurisé :
+		</div>
+		<div class="footer-securise-ogone"></div>
+		<div class="footer-securise-1euro"></div>
+		<div class="footer-securise-paypal"></div>
+	    </div>
+	</div>
+    </div>
+    <div class="footer-black-container">
+	<div class="page">
+            <?php /*
+	    <div class="footer-sema-contenu">
+		<strong>Vos recherches préférées</strong><br />
+		<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=0">0</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=a">A</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=b">B</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=c">C</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=d">D</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=e">E</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=f">F</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=g">G</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=h">H</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=i">I</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=j">J</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=k">K</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=l">L</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=m">M</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=n">N</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=o">O</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=p">P</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=q">Q</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=r">R</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=s">S</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=t">T</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=u">U</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=v">V</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=w">W</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=x">X</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=y">Y</a>&nbsp;&nbsp;|
+		&nbsp;&nbsp;<a href="<?php echo Mage::getBaseUrl(); ?>index-sema?l=z">Z</a>
+	    </div>
+            */
+            ?>
+	    <div class="footer-sema-contenu">
+		<h2>Boutique en ligne spécialisée dans la <strong>vente</strong> de produits, accessoires et <strong>pièces automobiles</strong> destinés au sport auto !</h2>
+                <!--Vente de pièces détachées auto et de vêtement de sport mécanique-->
+		Constructeur et compétiteur automobile, Oreca vous présente sa gamme de <b><a target="_self" href="<?php echo Mage::getBaseUrl(); ?>l-habillement">vêtement de sport</a></b><a href="<?php echo Mage::getBaseUrl(); ?>l-habillement"> mécanique</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires?univers=280">d'objets et goodies formule 1</a>, et ses <b><a target="_self" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule?univers=160">pièces auto de rallye</a></b>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>le-vehicule?univers=159">karting</a> et <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?univers=158">voitures sportives</a>. Retrouvez toute notre expertise dans des <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?univers=160">produits destinés aux professionnels</a> et aux <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>les-accessoires">amateurs de sport automobile</a>. <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=333">McLaren</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=58488">Mercédès GP</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=349">Ferrari</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=58287">Citroën WRC</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=301">Sparco</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=38694">Hans</a>, <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=51577">Gopro</a>… les plus grandes marques se trouvent sur notre site de <b><a target="_self" href="<?php echo Mage::getBaseUrl(); ?>la-mecanique">vente de pièces détachées auto</a></b> et de <a target="_self" href="<?php echo Mage::getBaseUrl(); ?>le-pilote">vêtements pour pilotes</a> : découvrez nos différentes collections !
+		<br /><br />
+		&copy; <?php echo date('Y'); ?> ORECA - Tous droits réservés
+	    </div>
+	</div>
+    </div>
+</div>
+<?php // modal ajout panier ?>
+<div class="modal" id="yesno" style="text-align:center; padding:5px;">
+    <div style="float:left; background-color: #FFF5EB; height:150px; padding:5px; text-align:left;">
+	<div style="float:right; font-size:11px; font-weight:bold;"><a href="#" class="close">fermer X</a></div>
+	<div style="color:#E98000; float:left; width:100%; text-align:left; font-size:18px; font-weight:bold;">Votre produit a bien été ajouté au panier</div>
+	<div id="added-prod" style="float:left; width:400px; height:120px; margin-top:10px;">
+	    <div id="added-prod-photo" style="float:left; width:60px; height:60px; border:1px solid #CCCCCC;">
+
+	    </div>
+	    <div id="added-prod-name" style="float:left; width:315px; margin-left:10px;">
+
+	    </div>
+	    <div id="added-prod-qty" style="float:left; margin-left:10px;">
+
+	    </div>
+
+	</div>
+	<div style="float:right; width:200px; height:120px;">
+	    <img class="close" style="cursor:pointer;" onclick="location.href='<?php echo Mage::getBaseUrl() ?>checkout/cart'" src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_voirpanier.png" />
+	    <br /><br />
+	    <img class="close" style="cursor:pointer;" src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_poursuivre.png" />
+	</div>
+
+    </div>
+    <!--<div style="float:left; height:300px;">-->
+    <div style="float:left;">
+
+	<div id="added-prod-linked" style="float:left; margin-left:10px;">
+
+	</div>
+	<div id="added-prod-reassur" style="float:left; margin-left:10px; display:none;">
+	    <!--
+	    <div style="float:left; width:180px; height:250px; margin-left:10px; margin-right:20px;">
+		<a href="http://www.oreca-store.com/contacts/">
+		    <img src="<?php //echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/choixvehicule/ban_servclient.jpg" />
+		</a>
+	    </div>
+	    <div style="float:left; width:180px; height:250px; margin-left:20px; margin-right:20px;">
+		<a href="http://www.oreca-store.com/livraison-24h/">
+		    <img src="<?php //echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/choixvehicule/ban_livraison.jpg" />
+		</a>
+	    </div>
+	    <div style="float:left; width:180px; height:250px; margin-left:20px; margin-right:15px;">
+		<a href="http://www.oreca-store.com/echange-garanti/">
+		    <img src="<?php //echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/choixvehicule/ban_echange.jpg" />
+		</a>
+	    </div>
+	    -->
+	</div>
+    </div>
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var triggers = jQuery(".modalInput").overlay({
+    // some mask tweaks suitable for modal dialogs
+    mask: {
+	    //color: '#ebecff',
+	    color: '#000000',
+	    loadSpeed: 200,
+	    opacity: 0.4
+    },
+    top: 'center',
+    closeOnClick: false
+    });
+
+    var buttons = jQuery("#yesno button").click(function(e) {
+	// get user input
+	var yes = buttons.index(this) === 0;
+	// do something with the answer
+	//triggers.eq(0).html("You clicked " + (yes ? "yes" : "no"));
+	});
+    });
+</script>
+<?php // Fin modal panier ?>

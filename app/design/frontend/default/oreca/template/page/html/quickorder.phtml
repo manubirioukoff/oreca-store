@@ -1,0 +1,247 @@
+<?php
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+?>
+<div class="titre-panier" style="margin-top:0px;">
+    Commande par référence
+</div>
+<div class="titre-gris">
+    Ajoutez des articles à votre panier à partir des références du catalogue ORECA
+</div>
+<div class="contenu-gris" style="height:100px;">
+    <div class="quickorder-loupe">
+	<img src="<?php echo $this->getSkinUrl('images/loupe.png'); ?>" />
+    </div>
+    <div style="margin-top:40px; margin-left:180px; font-size:14px; font-weight:bold;">
+    Saisissez votre référence et cliquez sur "Rechercher"
+    <form id="quickordersearch" name="quickordersearch" action="" method="post">&nbsp;&nbsp;&nbsp;&nbsp;
+    <?php
+    if (isset($_POST['ref'])) { $postref = $_POST['ref']; } else { $postref = ""; }
+    ?>
+    <input name="ref" id="ref" type="text" value="<?php echo $postref ?>" style="width:200px;" />&nbsp;&nbsp;
+    <button type="button" class="quickorder-btn-search" onclick="document.forms['quickordersearch'].submit();"><div style="margin-top:-3px; margin-left:-10px;">Rechercher</div></button>
+    </form>
+    </div>
+</div>
+<div class="quickorder-contenu">
+    <?php
+    if(isset($_POST['ref']) && $_POST['ref'] != ''){
+	$refsearch = $_POST['ref'];
+	$sql = "SELECT sku FROM catalog_product_entity WHERE sku LIKE '%$refsearch%'";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+	$compt = 0;
+	if (count($res) != 0) {
+	    
+	    ?>
+	    <div class="titre-gris">
+		Choisissez votre produit, sa quantité et cliquez sur le bouton ajouter au panier
+	    </div>
+	    <div class="contenu-gris">
+		<table style="width:100%;">
+		    <tr>
+			<td style="font-weight:bold;">Référence</td>
+			<td style="font-weight:bold;">Nom du produit</td>
+			<td style="font-weight:bold;">Disponibilité</td>
+			<td style="font-weight:bold;">Prix</td>
+			<td style="font-weight:bold;">Qté</td>
+			<td></td>
+		    </tr>
+		
+	    <?php
+	    foreach($res as $prod) {
+		$idprod = Mage::getModel('catalog/product')->getIdBySku($prod['sku']);
+		$enfant = Mage::getModel('catalog/product')->load($idprod);
+		if ($enfant->isSaleable() && $enfant->getTypeId() == 'simple' ) {
+		    $compt++;
+		    if ($compt % 2) { $oddeven = "background-color:#FFFFFF"; } else { $oddeven = ""; }
+		    $stocklevel = Mage::getModel('cataloginventory/stock_item')->loadByProduct($enfant)->getQty();
+		    $stockreel = round($stocklevel, 0);
+		    $minqty = Mage::getModel('cataloginventory/stock_item')->loadByProduct($enfant)->getMinSaleQty();
+		    $minqty = round($minqty);
+		    if (!$minqty || $minqty == 0) {
+			    $minqty = 1;
+		    }
+		    if($stockreel > 0) {
+			if($stockreel >= 3) {
+                            $dispo = "<span style='color:green'>En stock</span>";
+                        }
+                        else {
+                            $dispo = "<span style='color:orange'>Dernières pièces !</span>";
+                        }
+                    }
+		    else {
+			$dispo = "<span style='color:red'>Sur commande</span>";
+		    }
+		    $photoprod = Mage::getModel('core/layout')->helper('catalog/image')->init($enfant, 'image')->resize(60, 60);
+		    $prixnormal = Mage::getModel('core/layout')->helper('tax')->getPrice($enfant, $enfant->getPrice(), true);
+		    $prixnormal = Mage::helper('core')->currency($prixnormal,true,false);
+		    $prixfinal = Mage::getModel('core/layout')->helper('tax')->getPrice($enfant, $enfant->getFinalPrice(), true);
+		    $prixfinal = Mage::helper('core')->currency($prixfinal,true,false);
+		    if($prixfinal < $prixnormal) {
+			$affichprice = "<span style='text-decoration:line-through; font-size:10px;'>".$prixnormal."</span><br />";
+			$affichprice .= "<strong style='color:red;'>".$prixfinal."</strong>";
+		    }
+		    else {
+			$affichprice = "<strong>".$prixfinal."</strong>";
+		    }
+		    ?>
+		    <tr style="<?php echo $oddeven; ?>">
+			<td style="vertical-align:middle; height:40px;"><a href="<?php echo $enfant->getProductUrl(); ?>"><?php echo $enfant->getSku(); ?></a></td>
+			<td style="vertical-align:middle; height:40px;"><a href="<?php echo $enfant->getProductUrl(); ?>"><?php echo $enfant->getName(); ?></a></td>
+			<td style="vertical-align:middle; height:40px;"><?php echo $dispo; ?></td>
+			<td style="vertical-align:middle; height:40px;"><?php echo $affichprice; ?></td>
+			<td style="vertical-align:middle; height:40px;"><input name="qty<?php echo $enfant->getId(); ?>" id="qty<?php echo $enfant->getId(); ?>" type="text" value="<?php echo $minqty; ?>" style="width:20px;" /></td>
+			<td style="vertical-align:middle; height:40px;">
+			    <button id="btnajoutpanier" onclick="ajaxQuickorderAddToCart(<?php echo $enfant->getId(); ?>, '<?php echo $enfant->getName(); ?>', '<?php echo $photoprod; ?>', '', jQuery('#qty<?php echo $enfant->getId(); ?>').val()); jQuery('#layer-ajout-panier').overlay().load();" class="quickorder-btn-addtocart">
+				Ajouter au panier
+			    </button>
+			</td>
+		    </tr>
+		    <?php
+		}
+	    }
+	    ?>
+		</table>
+	    </div>
+	    <?php
+	}
+	else {
+	    ?>
+	    <div class="quickorder-dossier">
+		<img src="<?php echo $this->getSkinUrl('images/quickorder_dossier_noresult.png'); ?>" />
+	    </div>
+	    <div class="quickorder-contenu-texte">
+		<span style="font-size:16px; font-weight:bold;">Aucun résultat ne correspond à votre recherche. </span>
+		<br /><br />
+		<strong>ORECA vous conseille :</strong><br />
+		<span style="color:#FF6E0B; font-weight:bold;">- Assurez vous tout d'abord d'avoir entré la bonne référence </span><br />
+			* Comparez la référence saisie avec celle du catalogue papier (ou sa version interactive)
+			<br />
+			* Dans certains tableaux, le début de la référence figure en en-tête du tableau, la référence à la suite du produit ne correspondant qu'à la déclinaison
+			<br />
+			* Prenez soin d'éviter toute confusion entre le 0 (zéro) et la lettre O. Par exemple, les références de la marque Lico débutent toutes par 8OL et non 8'zéro'L
+			<br /><br />
+		<span style="color:#FF6E0B; font-weight:bold;">
+		    - Ne saisissez que la racine de votre référence. Vous pourrez alors choisir votre produit parmi tous ceux dont la référence commence par la référence saisie 
+		</span>
+			<br /><br />
+		<span style="color:#FF6E0B; font-weight:bold;">
+		    - Parcourez la catégorie concernée par votre recherche dans la Boutique en ligne. Vous y trouverez l'ensemble de nos gammes vendues à ce jour en ligne :
+		</span>
+			<br />
+			* Pilote<br />
+			* Véhicule<br />
+			* Mécanique<br />
+			* Stand<br />
+	    </div>
+	    <?php
+	}
+    }
+    else {
+    ?>
+    <div class="quickorder-dossier">
+	<img src="<?php echo $this->getSkinUrl('images/quickorder_dossier.png'); ?>" />
+    </div>
+    <div class="quickorder-contenu-texte">
+	<span style="font-size:16px; font-weight:bold;">Comment utiliser la commande par référence ?</span>
+	<br /><br />
+	<span style="color:#FF6E0B; font-weight:bold;">- Saisissez la référence que vous retrouvez dans votre catalogue papier</span><br />
+	      * Dans certains tableaux, le début de la référence figure en en-tête du tableau, la référence à la suite du produit ne correspondant qu'à la déclinaison<br />
+	<br />
+	      * Prenez soin d'éviter toute confusion entre le 0 (zéro) et la lettre O. Par exemple, les références de la marque Lico débutent toutes par 8OL et non 8'zéro'L<br />
+	<br />
+	<span style="color:#FF6E0B; font-weight:bold;">
+	    - Vous pouvez également ne saisir que la racine de votre référence. Vous pourrez alors choisir votre produit parmi tous ceux dont la référence commence par la référence saisie
+	</span>
+    </div>
+    <?php
+    }
+    ?>
+</div>
+
+<?php // Popoup ajout panier ?>
+<script type="text/javascript" src="<?php echo Mage::getBaseUrl(); ?>js/oreca/popup_produit.js"></script>
+<div class="fichprod-popup-panier" id="layer-ajout-panier" style="display:none;">
+	<div style="float:left; height:150px; padding:5px; text-align:left;">
+	<!--<div style="float:right; font-size:11px; font-weight:bold;"><a href="#" class="close">fermer X</a></div>-->
+	<div style="color:#E98000; float:left; width:100%; text-align:left; font-size:18px; font-weight:bold;">Votre produit a bien été ajouté au panier</div>
+	<div id="added-prod" style="float:left; width:380px; height:80px; margin-top:10px;">
+	    <div id="added-prod-photo" style="float:left; width:60px; height:60px; border:1px solid #CCCCCC;">
+
+	    </div>
+	    <div id="added-prod-name" style="float:left; width:275px; margin-left:10px;">
+
+	    </div>
+	    <div id="added-prod-qty" style="float:left; margin-left:10px;">
+
+	    </div>
+
+	</div>
+	<div class="boutons-layer-ajout-panier" style="float:right; width:200px; height:100px;">
+	    <img style="cursor:pointer;" class="close" onclick='location.href="<?php echo Mage::getBaseUrl() ?>checkout/cart";' src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_voirpanier.png" />
+	    <br /><br />
+	    <img style="cursor:pointer;" class="close" src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_poursuivre.png" />
+	</div>
+
+	</div>
+	<!--<div style="float:left; height:300px;">-->
+	<div style="float:left;">
+
+	    <div id="added-prod-linked" style="float:left; margin-left:10px; width:590px;">
+
+	    </div>
+	    <div id="added-prod-reassur" style="float:left; display:none;">
+		<img src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/vos_services.jpg" usemap="#reassur" />
+		<map name="reassur" id="reassur">
+		    <area shape="rect" coords="5,36,200,121" href="<?php echo Mage::getBaseUrl(); ?>contacts/" />
+		    <area shape="rect" coords="208,36,403,121" href="<?php echo Mage::getBaseUrl(); ?>livraison-24h/" />
+		    <area shape="rect" coords="410,37,605,123" href="<?php echo Mage::getBaseUrl(); ?>echange-garanti/" />
+		    <area shape="rect" coords="4,129,199,213" href="<?php echo Mage::getBaseUrl(); ?>facilite-paiement/" />
+		    <area shape="rect" coords="208,130,401,212" href="<?php echo Mage::getBaseUrl(); ?>paiement-securise/" />
+		    <area shape="rect" coords="410,130,604,214" href="<?php echo Mage::getBaseUrl(); ?>satisfait-rembourse/" />
+		</map>
+	    </div>
+	</div>
+    </div>
+
+<script>
+
+jQuery("#btnajoutpanier").click(function() {
+      jQuery("#layer-ajout-panier").overlay().load();
+  });
+jQuery(function() {
+
+	// if the function argument is given to overlay,
+	// it is assumed to be the onBeforeLoad event listener
+	jQuery("#layer-ajout-panier").overlay({
+	//jQuery("#vignprodapercu").overlay({
+
+		mask: 'black',
+		effect: 'apple',
+		api: true,
+
+		onBeforeLoad: function() {
+
+			// grab wrapper element inside content
+			var wrap = this.getOverlay().find(".contentWrap");
+			var self = this;
+
+			// load the page specified in the trigger
+			//wrap.load(this.getTrigger().attr("href"));
+			wrap.load(this.getTrigger().attr("href"), function(){
+			    jQuery('.close', this).click(function(){self.close()});
+			});
+		},
+
+		onClose: function() {
+		    jQuery('div.popup-produit-conteneur').html('');
+		}
+
+	});
+
+});
+
+</script>

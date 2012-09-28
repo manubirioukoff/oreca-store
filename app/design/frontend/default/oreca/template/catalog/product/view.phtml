@@ -1,0 +1,1028 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ */
+?>
+<?php
+$_product = $this->getProduct();
+
+$attributeSetName = Mage::getModel('eav/entity_attribute_set')->load($_product->getAttributeSetId())->getAttributeSetName();
+
+$opmkg = $_product->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($_product);
+
+$finalprice = Mage::helper('tax')->getPrice($_product, $_product->getFinalPrice(), true);
+$regularprice = Mage::helper('tax')->getPrice($_product, $_product->getPrice(), true);
+
+// A partir de
+$affichapartirde = 'display:none;';
+
+if($_product->getTypeId() == 'configurable') {
+    $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $_product);
+    //echo "childids";
+    //var_dump($childProducts);
+    $tabprices = array();
+
+    foreach ($childProducts as $child) {
+	//echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+	if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+	    $tabprices[] = $child->getFinalPrice();
+	}
+    }
+    sort($tabprices);
+    $lastprice = count($tabprices) - 1;
+    //var_dump($tabprices);
+    if ($tabprices[0] != $tabprices[$lastprice]) {
+	$affichapartirde = 'display:block;';
+	$finalprice = Mage::helper('tax')->getPrice($_product, $tabprices[0], true);
+    }
+}
+
+// En promo ?
+$displaypastille = "display:none;";
+$pcentpromo = 0;
+if ($regularprice > $finalprice) {
+    $displaypastille = "display:block;";
+    $pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+}
+$db = Mage::getSingleton('core/resource')->getConnection('core_write');
+$result = $db->query("SELECT value FROM alsobought WHERE entity_id = '".$_product->getId()."'");
+$rows = $result->fetch(PDO::FETCH_ASSOC);
+?>
+<script type="text/javascript" src="<?php echo Mage::getBaseUrl(); ?>js/oreca/popup_produit.js"></script>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+<div class="titre-retour"><a href="javascript:history.go(-1);">Retour à la liste</a></div>
+
+<div class="conteneur-photos" id="ancre_photo">
+    <?php echo $this->getChildHtml('media') ?>
+    <div class="conteneur-review-fblike">
+	<div class="conteneur-review">
+	    <?php echo $this->getReviewsSummaryHtml($_product, false, true)?>
+	</div>
+	<div class="conteneur-fblike">
+	    <div style="float:left; margin-top:7px; margin-left:45px;">
+		<div class="fb-like" data-href="<?php echo $_product->getProductUrl(); ?>" data-send="false" data-layout="button_count" data-width="145" data-show-faces="false"></div>
+	    </div>
+            <div style="float:left; margin-top:2px; margin-left:45px;">
+                <g:plusone size="medium"></g:plusone>
+            </div>
+            <!-- Placez cet appel d'affichage à l'endroit approprié. -->
+            <script type="text/javascript">
+            window.___gcfg = {lang: 'fr'};
+
+            (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+            </script>
+	</div>
+                <!-- Facebook Like Product Button BEGIN - load the SDK asynchronously -->
+                    <div id="fb-root"></div>
+		    <script>(function(d, s, id) {
+		      var js, fjs = d.getElementsByTagName(s)[0];
+		      if (d.getElementById(id)) return;
+		      js = d.createElement(s); js.id = id;
+		      js.src = "//connect.facebook.net/fr_FR/all.js#xfbml=1&appId=153856598039359";
+		      fjs.parentNode.insertBefore(js, fjs);
+		    }(document, 'script', 'facebook-jssdk'));</script>
+                <!-- Facebook Like Product Button END -->
+    </div>
+</div>
+<div class="conteneur-contenu">
+    <h1 class="fichprod-titre popup-produit-name">
+	<?php echo $_product->getName(); ?>
+    </h1>
+    <div class="fichprod-shortdesc popup-produit-shortdesc">
+	<?php echo $_product->getShortDescription(); ?>
+    </div>
+    <div class="fichprod-shortdesc-savoirplus">
+	<a href="#description">> En savoir plus...</a>
+    </div>
+    <script type="text/javascript" defer="defer">
+	//<![CDATA[
+	//var bundle = new Product.Bundle(<?php echo $this->getJsonBundleConfig() ?>);
+	//]]>
+    </script>
+    <script type="text/javascript">
+	var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+    </script>
+    <form action="<?php echo $this->getAddToCartUrl($_product) ?>" method="post" name="product_addtocart_form" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+    <?php //echo $this->getChildHtml('addtocart') ?>
+<?php
+    if ($_product['type_id'] == "bundle" || $attributeSetName == 'Stage de pilotage') {
+    ?>
+    <?php echo $this->getChildChildHtml('container1') ?>
+	<?php echo $this->getChildChildHtml('container2') ?>
+	<?php } ?>
+    
+    <script type="text/javascript">
+    //<![CDATA[
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function(button, url) {
+            if (this.validator.validate()) {
+                var form = this.form;
+                var oldUrl = form.action;
+
+                if (url) {
+                   form.action = url;
+                }
+                var e = null;
+                try {
+                    this.form.submit();
+                } catch (e) {
+                }
+                this.form.action = oldUrl;
+                if (e) {
+                    throw e;
+                }
+
+                if (button && button != 'undefined') {
+                    button.disabled = true;
+                }
+            }
+        }.bind(productAddToCartForm);
+
+        productAddToCartForm.submitLight = function(button, url){
+            if(this.validator) {
+                var nv = Validation.methods;
+                delete Validation.methods['required-entry'];
+                delete Validation.methods['validate-one-required'];
+                delete Validation.methods['validate-one-required-by-name'];
+                if (this.validator.validate()) {
+                    if (url) {
+                        this.form.action = url;
+                    }
+                    this.form.submit();
+                }
+                Object.extend(Validation.methods, nv);
+            }
+        }.bind(productAddToCartForm);
+    //]]>
+    </script>
+    <?php
+    if ($_product['type_id'] == "bundle" || $attributeSetName == 'Stage de pilotage') {
+    ?>
+    
+    <?php
+    }
+    else {
+	
+	//echo $attributeSetName;
+	if ($attributeSetName == "Stage de pilotage") {
+	    echo $this->getChildChildHtml('container1', '', true, true);
+	    echo $this->getChildChildHtml('container2', '', true, true);
+	}
+	else {
+	?>
+    <div class="fichprod-conteneur-attributes">
+	<div class="fichprod-attributes-configurables">
+	   <?php
+	     	// Recuperation des infos du produit configurable
+		if($_product->getTypeId() == 'configurable') {
+		    $block = $this
+			->getLayout()
+			//->getBlockSingleton('catalog/product_view')
+			//->setProductId($_product->getId());
+			->getBlockSingleton('catalog/product_view_type_configurable')
+			->setData('product', $_product);
+		    $jsonconf = $block->getJsonConfig();
+		    $jsonconf = str_replace('Choose an Option...','Choisir...',$jsonconf);
+
+		    $blockview = $this
+			->getLayout()
+			->getBlockSingleton('catalog/product_view')
+			->setProductId($_product->getId());
+		    $jsonprice = $blockview->getJsonConfig();
+
+		    $tabattribs = array();
+		    foreach(json_decode($jsonconf) as $attribute) {
+			foreach($attribute as $val) {
+			    if($val->id) {
+				$tabattribs[] = $val->id;
+			    }
+			}
+		    }
+		    $jsonattribs = json_encode($tabattribs);
+		?>
+		<script type="text/javascript">
+		    var optionsPrice = new Product.OptionsPrice(<?php echo $jsonprice; ?>);
+		</script>
+		<dl>
+		<?php $_attributes = Mage::helper('core')->decorateArray($_product->getTypeInstance()->getConfigurableAttributes()); ?>
+		<?php foreach($_attributes as $_attribute): ?>
+		    <dt><label class="required"><em>*</em><?php echo $_attribute->getLabel() ?></label></dt>
+		    <dd<?php if ($_attribute->decoratedIsLast){?> class="last"<?php }?>>
+			<div class="input-box">
+			    <select name="super_attribute[<?php echo $_attribute->getAttributeId() ?>]"
+				    id="attribute<?php echo $_attribute->getAttributeId() ?>"
+				    class="required-entry super-attribute-select"
+				    <?php if ($_attribute->decoratedIsLast){?> onchange='changeInfos("<?php echo $_product->getId(); ?>", "<?php echo addslashes($jsonconf); ?>" ,"<?php echo addslashes($jsonattribs); ?>");'<?php }?>
+				    >
+				<option>Choisir...</option>
+			      </select>
+			  </div>
+		    </dd>
+		<?php endforeach; ?>
+		</dl>
+		<script type="text/javascript">
+		    var spConfig = new Product.Config(<?php echo $jsonconf; ?>);
+		</script>
+	    <?php
+	    }
+	    // Fin produit configurable
+	    ?>
+		<?php
+	    if ($_product->isSaleable() && $_product->getTypeId() != 'configurable'){
+	$stocklevel = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product)->getQty();
+	$stockreel = round($stocklevel, 0);
+	$minqty = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product)->getMinSaleQty();
+	$minqty = round($minqty);
+	$delaifournisseur = $_product->getdelaiFournisseur();
+	if (!$minqty || $minqty == 0) {
+		$minqty = 1;
+	}
+	// Dispo
+	if($_product->getepuise() == 1){
+	    if($stockreel < $minqty) {
+		$dispo = "<span style='color:red;font-weight:bold;'>Produit épuisé</span>";
+		$expedition = "";
+	    }
+	    if($stockreel > $minqty && $stockreel <= 3) {
+		$dispo = "<span style='color:orange;font-weight:bold;'>Dernières pièces !</span>";
+		$expedition = "Expédition sous 24H ouvrées";
+	    }
+	    if($stockreel > 3) {
+		$dispo = "<span style='color:green;font-weight:bold;'>En stock</span>";
+		$expedition = "Expédition sous 24H ouvrées";
+	    }
+	}
+	else {
+	    if($stockreel < $minqty) {
+		$dispo = "<span style='color:red;font-weight:bold;'>Sur commande</span>";
+		$expedition = "Expédition sous $delaifournisseur jours";
+	    }
+	    if($stockreel > $minqty && $stockreel <= 3) {
+		$dispo = "<span style='color:orange;font-weight:bold;'>Dernières pièces !</span>";
+		$expedition = "Expédition sous 24H ouvrées";
+	    }
+	    if($stockreel > 3) {
+		$dispo = "<span style='color:green;font-weight:bold;'>En stock</span>";
+		$expedition = "Expédition sous 24H ouvrées";
+	    }
+	}
+	$qtyencours = $minqty;
+	$optionstyle = "";
+	$horsstock = "";
+	$qtydropbox = "";
+	$optionpardefaut = "";
+	if($_product->getepuise() == 1){
+		if($stockreel < $minqty) {
+			$qtydropbox .= "<option value='' selected>Rupture de stock</option>";
+		}
+		else {
+			if ($stockreel > 10) {
+				$maxstock = 10;
+			}
+			else {
+				$maxstock = $stockreel;
+			}
+			for($j=1;$j<=$maxstock;$j++){
+				$qtyencours = $minqty * $j;
+				$optionpardefaut = "";
+				if($j==1){
+					$optionpardefaut = "selected";
+				}
+				$qtydropbox .= "<option value='".$qtyencours."' ".$optionpardefaut.">".$qtyencours."</option>";
+			}
+		}
+	}
+	else {
+		for($j=1;$j<11;$j++){
+			$qtyencours = $minqty * $j;
+			$optionpardefaut = "";
+			if($qtyencours > $stockreel){
+				$optionstyle = "qty-rupture";
+				$horsstock = " - Sur commande";
+			}
+			if($j==1){
+				$optionpardefaut = "selected";
+			}
+			$qtydropbox .= "<option value='".$qtyencours."' class='".$optionstyle."' ".$optionpardefaut.">".$qtyencours.''.$horsstock."</option>";
+		}
+	}
+
+		$viewqty = "";
+	    }
+	    else {
+		$viewqty = "display:none;";
+	    }
+	    // Fin affichage combobox qty
+
+
+	    ?>
+		<div class="titre-qty" style="<?php echo $viewqty; ?>"><strong>Quantité</strong></div>
+		    <div id="select-qty" style="<?php echo $viewqty; ?>">
+			   <select class='super-attribute-select' name='qty' id='qty'>
+				<?php echo $qtydropbox; ?>
+			   </select>
+		    </div>
+	</div>
+	<div class="fichprod-infos">
+	    <div class="popup-produit-dispo"><?php echo $dispo; ?></div>
+	    <div class="popup-produit-expedition"><?php echo $expedition; ?></div>
+	    <!--<div class="popup-produit-fraisport">Frais de port à partir de : XX.XX€</div>-->
+	</div>
+    </div>
+   <?php /* AJOUT */ ?>
+        <?php //if (!$this->getIsVirtual()): echo $this->getChildHtml('shipping'); endif; ?>
+    <?php /* FIN AJOUT */ ?>
+    <?php
+    } // Fin test Stages
+    } // Fin test produits bundle
+    ?>
+    <div class="fichprod-liens">
+	<div class="fichprod-envoi-ami">
+	    <?php if ($this->canEmailToFriend()): ?>
+		<a href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
+	    <?php endif; ?>
+	</div>
+	<?php echo $this->getChildHtml('addto'); ?>
+	
+	    
+            <?php
+	    // Gestion des liens choix taille
+	    $catids = $_product->getCategoryIds();
+	    // Combinaisons
+	    if (in_array(28,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>info-taille-equipement-pilote#tailles-combinaisons','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Bottines
+	    elseif (in_array(62,$catids) || in_array(160,$catids) || in_array(161,$catids)) {
+	    ?>
+	     <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>informations-tailles-habillement#tailles-chaussures','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Gants
+	    elseif (in_array(63,$catids) || in_array(162,$catids) || in_array(163,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>info-taille-equipement-pilote#tailles-gants','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Casques
+	    elseif (in_array(64,$catids) || in_array(164,$catids) || in_array(165,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>info-taille-equipement-pilote#tailles-casques','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Sous-vetements
+	    elseif (in_array(65,$catids) || in_array(166,$catids) || in_array(167,$catids) || in_array(168,$catids) || in_array(169,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>info-taille-equipement-pilote#tailles-sous-vetements','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Chaussures
+	    elseif (in_array(40,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>informations-tailles-habillement#tailles-chaussures','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Chemises
+	    elseif (in_array(36,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>informations-tailles-habillement#tailles-chemises','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // Sweats et Blousons
+	    elseif (in_array(38,$catids) || in_array(39,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup(<?php echo Mage::getBaseUrl(); ?>informations-tailles-habillement#tailles-pulls','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    // T-Shirts
+	    elseif (in_array(35,$catids)) {
+	    ?>
+	    <div class="fichprod-taille"><a href="javascript:affichage_popup('<?php echo Mage::getBaseUrl(); ?>informations-tailles-habillement#tailles-tshirts','choix_taille');">Bien choisir sa taille</a></div>
+	    <?php
+	    }
+	    ?>
+	
+	<SCRIPT LANGUAGE="JavaScript">
+	function affichage_popup(nom_de_la_page, nom_interne_de_la_fenetre)
+	{
+	window.open(nom_de_la_page, nom_interne_de_la_fenetre, config='height=500, width=1000, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no')
+	}
+	</SCRIPT>
+    
+	<script>
+	    function atc(id,qty){
+		jQuery.ajax({
+		    type: "GET",
+		    //url: "http://192.168.1.248/magento/services/addtocart.php",
+		    url: "http://192.168.1.248/magento/checkout/cart/add",
+		    //data: "prodid="+id+"&qty="+qty,
+		    data: "product="+id+"&qty="+qty,
+		    success: function(msg){
+			//alert('Ajout panier de '+id+' - Qty : '+name);
+			//jQuery('div.popup-produit-conteneur').html('Ajout panier de '+id+' - Qty : '+qty);
+			jQuery('div.popup-produit-gauche').css('display','none');
+			jQuery('div.popup-produit-droite').css('display','none');
+			jQuery('#layer-ajout-panier').css('display','block');
+		    },
+		    error: function(msg){
+			//alert("La quantité demandée n'est pas disponible.");
+		    }
+		});
+		//http://192.168.1.248/magento/checkout/cart/add?product=43796&qty=1
+	    }
+	</script>
+    </div>
+    <div class="fichprod-btn-add" id="vignprodapercu">
+    <?php
+    
+    if($_product->getTypeId() == 'configurable') {
+	?>
+	<img id="btnajoutpanier" class="btnconfigurable" style="opacity:0.3;" src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/fichprod_btn_addtocart.png" />
+    <?php
+    }
+    elseif ($_product['type_id'] == "bundle") {
+	?>
+	<img id="btnajoutpanierbundle" onclick="productAddToCartForm.submit(this)" style="cursor:pointer;" src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/fichprod_btn_addtocart.png" />
+    <?php
+    }
+    else {
+
+	$_productthumb = Mage::getModel('core/layout')->helper('catalog/image')->init($_product, 'thumbnail')->resize(60, 60);
+	if($attributeSetName != 'Stage de pilotage') {
+	?>
+	<img id="btnajoutpanier" onclick="ajaxAddToCart(<?php echo $_product->getId(); ?>, '<?php echo $_product->getName(); ?>', '<?php echo $_productthumb; ?>', '')" style="cursor:pointer;" src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/fichprod_btn_addtocart.png" />
+    <?php
+	}
+	else {
+	    ?>
+	    <img id="btnajoutpanierbundle" onclick="productAddToCartForm.submit(this)" style="cursor:pointer;" src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/fichprod_btn_addtocart.png" />
+	    <?php
+	}
+    }
+    ?>
+    </div>
+    <div class="fichprod-seo-links">
+	<?php
+	$marqueid = $_product->getglobal_marques();
+	$marque =  $_product->getAttributeText('global_marques');
+	$marqueimg = strtr($marque, " ", "-");
+	?>
+	<?php
+	$currentCategory = Mage::registry('current_category');
+	if ($currentCategory) {
+	echo "<div style='display:block; width:100%;'>";
+        echo "<a href='".$currentCategory->getUrl()."?global_marques=".$marqueid."'>";
+	echo "<div style='float:left;'><span style='color:#F86D04;'>> </span>Tou(te)s les </div>";
+	echo "<h2 class='lientous'>";
+	echo $currentCategory->getName()." <strong>".$marque."</strong>";
+	echo "</h2></a></div><br />";
+	}
+	?>
+	
+	<div style='float:left;'><a href="<?php echo Mage::getBaseUrl() ?>store?global_marques=<?php echo $marqueid; ?>" title="Tous les produits <?php echo $_product->getAttributeText('global_marques'); ?>"><span style='color:#F86D04;'>> </span>Tous les produits </div><h2 class="lientous"><strong><?php echo $marque; ?></strong></h2>
+	<br /><br />
+    </div>
+</div>
+
+<div class="conteneur-barredroite">
+    <div class="fichprod-marque">
+	<?php
+	$marqueid = $_product->getglobal_marques();
+        $marque = $_product->getResource()->getAttribute('global_marques')->getFrontend()->getValue($_product);
+	$marqueimg = strtr($marque, " ", "-");
+	?>
+        <a href="<?php echo Mage::getBaseUrl(); ?>store?global_marques=<?php echo $marqueid; ?>">
+            <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'marques/138x138/'.$marqueimg.'.gif'; ?>" width="120px" height="120px" />
+        </a>
+    </div>
+    <div class="fichprod-prix">
+	<div class="popup-produit-pastillepromo" style="margin-bottom:0px; <?php echo $displaypastille; ?>">
+	    <div class="popup-produit-remise-texte">-<?php echo $pcentpromo; ?></div><div class="popup-produit-remise-pcent">%</div>
+	</div>
+	<?php
+	$margeprix = "";
+	if ($displaypastille == "display:none;") {
+	    $margeprix = "margin-top:28px;";
+	}
+        $_finalPriceInclTax = Mage::helper('core')->currency($finalprice,true,false);
+        ?>
+	<div class="popup-produit-prix" style="<?php echo $margeprix; ?>">
+	    <div class="popup-produit-prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+	    <div class="popup-produit-apartirde" style="<?php echo $affichapartirde; ?>">A partir de</div>
+	    <div class="popup-produit-prix-normal" style="margin-top:-8px; "><?php echo $_finalPriceInclTax; ?></div>
+	</div>
+		
+    </div>
+    <div style="width:120px; margin-top:10px; display:block; float:left;" class="eurocom">
+	<script language="javascript" src="http://flux.effiliation.com/new1euro/11719392?montant=<?php echo substr($_finalPriceInclTax,0,-5); ?>&taille=120x39&type=3X5X10X20X&top=0&bottom=0&right=0&left=-300"></script>
+    </div>
+</div>
+
+ <map name="Map" id="Map">
+<area shape="rect" coords="2,2,110,54" href="#description" />
+<area shape="rect" coords="110,3,278,56" href="#infoscompl" />
+<area shape="rect" coords="280,3,400,54" href="#comparer" />
+<area shape="rect" coords="401,5,540,58" href="#avisclient" />
+<area shape="rect" coords="539,5,800,59" href="#crosssell" />
+</map>
+    
+<?php
+if(!$rows)
+{
+    $bonus = '_sans_dernier';
+}
+else
+{
+    $bonus = '';
+}
+?>
+<div class="fichprod-onglets onglets-description">
+    <a name="description" id="description">
+    <img src="<?php echo $this->getSkinUrl('images/fichprod_onglets_1' . $bonus . '.png') ?>" usemap="#Map" />
+    </a>
+</div>
+<div class="fichprod-contenu-infos popup-produit-desc">
+    <?php echo nl2br($_product->getDescription()); ?>
+</div>
+
+</a>
+<div class="fichprod-onglets onglets-infoscompl">
+    <a name="infoscompl" id="infoscompl">
+    <img src="<?php echo $this->getSkinUrl('images/fichprod_onglets_2' . $bonus . '.png') ?>" usemap="#Map" />
+    </a>
+</div>
+<div class="fichprod-contenu-infos" id="additional_data">
+    <?php if ($_additional = $this->getChildHtml('additional')):?>
+    <?php echo $_additional ?>
+    <?php endif;?>
+</div>
+
+
+<div class="fichprod-onglets onglets-comparer">
+    <a name="comparer" id="comparer">
+    <img src="<?php echo $this->getSkinUrl('images/fichprod_onglets_3' . $bonus . '.png') ?>" usemap="#Map" />
+    </a>
+</div>
+<div class="fichprod-contenu-infos" style="margin-bottom: 25px;">
+    <div class="description">
+        <?php if($this->helper('catalog/product_compare')->getItemCount()>0): ?>
+            <h3><?php echo $this->__('Compare Products') ?></h3>
+        <?php endif; ?>
+    </div>
+    <div class="compare-content">
+            
+    <?php if($this->helper('catalog/product_compare')->getItemCount()>0): ?>
+        <a href="<?php echo $this->helper('catalog/product_compare')->getClearListUrl() ?>" onclick="return confirm('<?php echo $this->__('Are you sure you would like to remove all products from your comparison?') ?>');"><?php echo $this->__('Clear All') ?></a>
+        <ol id="compare-items">
+        <?php 
+        // COMPARE DESIGN PRODUCTS
+        foreach($this->helper('catalog/product_compare')->getItemCollection() as $_index=>$_item): ?>
+            <li>
+                <input type="hidden" class="compare-item-id" value="<?php echo $_item->getId() ?>" />
+                <?php
+                $prod = Mage::getModel('catalog/product')->load($_item->getId());
+                    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(200, 200);
+                    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+                    $marqueimg = strtr($marque, " ", "-");
+                    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+                    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+                    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+                    if ($opmkg == 'promotion') {
+                        $opmkg = "";
+                    }
+
+
+                    // A partir de
+                    $affichapartirde = 'display:none;';
+
+                    if($prod->getTypeId() == 'configurable') {
+                        $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+                        //echo "childids";
+                        //var_dump($childProducts);
+                        $tabprices = array();
+
+                        foreach ($childProducts as $child) {
+                            //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+                            if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+                                $tabprices[] = $child->getFinalPrice();
+                            }
+                        }
+                        sort($tabprices);
+                        $lastprice = count($tabprices) - 1;
+                        //var_dump($tabprices);
+                        if ($tabprices[0] != $tabprices[$lastprice]) {
+                            $affichapartirde = 'display:block;';
+                            $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+                        }
+                    }
+
+                    // En promo ?
+                    $displaypastille = "display:none;";
+                    $pcentpromo = 0;
+                    if ($regularprice > $finalprice) {
+                        $displaypastille = "display:block;";
+                        $pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+                        $opmkg = "promotion";
+                    }
+
+                ?>
+
+                <div class="listeprods-vignette" style="margin:10px;" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+                    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+                    <div class="listeprods-apercu" id="vignprodapercu">
+                        <!--<a href="<?php echo $prod->getProductUrl(); ?>" rel="#overlay" style="text-decoration:none" onclick="disabledEventPropagation(event);">-->
+                        <img title="Aperçu rapide" alt="Aperçu rapide" src="<?php echo $this->getSkinUrl('images/vignprod_apercu_over.png'); ?>"
+                            href="<?php echo Mage::getBaseUrl(); ?>services/popup_produit.php?id=<?php echo $prod->getId(); ?>" rel="#overlay"
+                            onclick="disabledEventPropagation(event);"
+                            />
+                        <!--</a>-->
+                    </div>
+
+                    <div class="listeprods-vignprod-photo">
+                        <img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="200" height="200" />
+                    </div>
+                    <div class="listeprods-vignprod-name">
+                        <a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+                    </div>
+                    <div class="listeprods-vignprod-marque">
+                        <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'marques/'.$marqueimg.'.gif'; ?>" width="60px" height="60px" />
+                    </div>
+                    <div class="listeprods-vignprod-pastillepromo" style="<?php echo $displaypastille; ?>">
+                        <div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+                    </div>
+                    <div class="vignprod-prix">
+                        <div class="apartirde" style="<?php echo $affichapartirde; ?>">A partir de</div>
+                        <div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+                        <div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+                    </div>
+                </div>
+                <a href="<?php echo $this->helper('catalog/product_compare')->getRemoveUrl($_item) ?>"><!--img src="<?php echo $this->getSkinUrl('images/list_remove_btn.gif') ?>" alt="<?php echo $this->__('Remove This Item') ?>" title="<?php echo $this->__('Remove This Item') ?>" class="v-middle" onclick="return confirm('<?php echo $this->__('Are you sure you would like to remove this item from the compare products?') ?>');" /--> Retirer cet article</a>
+            </li>
+        <?php endforeach; ?>
+        </ol>
+        <script type="text/javascript" defer="defer">decorateList('compare-items')</script>
+        <div class="actions" style="position: relative; top: 59px; text-align: center; width: 124px; height: 28px; margin-left: 428px;">
+            <button type="button" class="button" onclick="popWin('<?php echo $this->helper('catalog/product_compare')->getListUrl() ?>','compare','top:50,left:50,width=800,height=600,resizable=yes,scrollbars=yes')"><img src="<?php echo $this->getSkinUrl();?>images/bouton_comparer.png" alt="comparer" /></button>
+        </div>
+    <?php else: ?>
+        <p><?php echo $this->__('You have no items to compare.') ?><br />
+        
+        </p>
+    <?php endif; ?>
+    </div>
+    <div class="fichprod-comparateur"><a href="<?php echo $this->helper('catalog/product_compare')->getAddUrl($_product); ?>"><?php echo $this->__('Ajouter ce produit au comparateur') ?></a></div>
+</div>
+
+<div class="fichprod-onglets onglets-commenter">
+    <a name="avisclient" id="avisclient">
+    <img src="<?php echo $this->getSkinUrl('images/fichprod_onglets_4' . $bonus . '.png') ?>" usemap="#Map" />
+    </a>
+</div>
+<div class="fichprod-contenu-infos" style="padding:0px;">
+    <p class="comment_tile"><span> > <?php echo $this->__('Write Your Own Review') ?></span></p>
+    <div class="comments_box"><?php echo $this->getLayout()->createBlock('review/form')->setBlockId('')->toHtml() ?></div>
+    <script type="text/javascript">
+        jQuery('.comment_tile').ready(function()
+        {
+            jQuery('.form-add').hide();
+            jQuery('.comment_tile').click(function()
+            {
+                   if(jQuery('.form-add').is(':visible'))
+                   {
+                        jQuery('.form-add').slideUp('fast');
+                             height_page = height_page - comments_box;
+                            jQuery('.col-main').css('height', height_page + 'px');                       
+                   }
+                   else
+                       {
+                            jQuery('.form-add').slideDown('fast');
+                            height_page = height_page + comments_box;
+                            jQuery('.col-main').css('height', height_page + 'px');
+                            
+                       }
+            });
+        });
+    </script>
+    <?php 
+    $_oddIterator = 0;
+    $_reviews = Mage::getModel('review/review')->getCollection()
+		    ->addStoreFilter(Mage::app()->getStore()->getId())
+		    ->addEntityFilter('product', $_product->getId())
+		    ->addStatusFilter('approved')
+		    ->addRateVotes()
+		    ->setDateOrder();
+    ?>
+    <?php foreach (array_reverse($_reviews->getItems()) as $_review): ?>
+    <div class="panel_com_all <?php if($_oddIterator%2==0):?>even<?php endif; ?>">
+                <div style="float:left; width:155px; font-weight:bold;padding: 10px; border-right: 1px solid #ccc;">
+                    Le <?php echo $this->formatDate($_review->getCreatedAt()); ?>
+                    <br />
+                    Par <?php echo $_review->getNickname(); ?>
+                    <br />
+                    <div class="panel_rating-box">
+                            <?php foreach ($_review->getRatingVotes() as $_vote): ?>
+                                            <span class="panel_rating-box_text">
+                                            <?php echo $_vote->getRatingCode() ?>
+                                            </span>
+                                            <div class="rating-box">
+                                                    <div class="rating" style="width: <?php echo $_vote->getPercent() ?>%;"></div>
+                                            </div><br />
+                            <?php endforeach; ?>
+                        
+                    </div>
+                </div>
+                <div style="float:left; width:794px; padding:10px;">
+                    <span style="font-weight:bold;"><?php echo $_review->title; ?></span>
+                    <br />
+                    <?php echo nl2br($_review->getDetail());?>
+                </div>
+                <?php /*
+                <div class="panel_com_info">
+			    <span class="panel_com_info_content">
+				    <?php echo $_review->title; ?> -
+				    <?php echo $this->__('(Posted on %s)', $this->formatDate($_review->getCreatedAt()), 'long');?>
+				    <?php echo $this->__('Review by %s', $_review->getNickname());?>
+			    </span>
+			    <div class="panel_rating-box">
+				    <?php foreach ($_review->getRatingVotes() as $_vote): ?>
+						    <span class="panel_rating-box_text">
+						    <?php echo $_vote->getRatingCode() ?>
+						    </span>
+						    <div class="rating-box">
+							    <div class="rating" style="width: <?php echo $_vote->getPercent() ?>%;"></div>
+						    </div>
+				    <?php endforeach; ?>
+			    </div>
+		    </div>
+		    <div class="panel_com_content">
+		    <?php echo nl2br($_review->getDetail());?>
+		    </div>
+               */ ?>
+	    </div>
+	    <?php $_oddIterator++; ?>
+<?php endforeach; ?>
+</div>
+<?php
+if($rows) {
+//print_r($rows);
+$tabprods = explode(';',$rows['value']);
+shuffle($tabprods);
+
+?>
+
+
+<div class="fichprod-onglets onglets-crossell">
+    <a name="crosssell" id="crosssell">
+    <img src="<?php echo $this->getSkinUrl('images/fichprod_onglets_5.png') ?>" usemap="#Map" />
+    </a>
+</div>
+<div class="fichprod-contenu-infos" style="padding-left:50px; width:960px;">
+    <?php
+    
+    for($i=0; $i<=3; $i++) {
+	if ($tabprods[$i]) {
+	    //echo $prod->getSku()." - ".$prod->getParentEnfant()."<br />";
+	    $prod = Mage::getModel('catalog/product')->load($tabprods[$i]);
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(200, 200);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = "promotion";
+	    }
+
+	?>
+
+	<div class="listeprods-vignette" style="margin:10px;" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+	    <div class="listeprods-apercu" id="vignprodapercu">
+		<!--<a href="<?php echo $prod->getProductUrl(); ?>" rel="#overlay" style="text-decoration:none" onclick="disabledEventPropagation(event);">-->
+		<img title="Aperçu rapide" alt="Aperçu rapide" src="<?php echo $this->getSkinUrl('images/vignprod_apercu_over.png'); ?>"
+		     href="<?php echo Mage::getBaseUrl(); ?>services/popup_produit.php?id=<?php echo $prod->getId(); ?>" rel="#overlay"
+		     onclick="disabledEventPropagation(event);"
+		     />
+		<!--</a>-->
+	    </div>
+
+	    <div class="listeprods-vignprod-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="200" height="200" />
+	    </div>
+	    <div class="listeprods-vignprod-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="listeprods-vignprod-marque">
+		<img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'marques/'.$marqueimg.'.gif'; ?>" width="60px" height="60px" />
+	    </div>
+	    <div class="listeprods-vignprod-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="vignprod-prix">
+		<div class="apartirde" style="<?php echo $affichapartirde; ?>">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+    ?>
+    <?php 
+    }
+    ?>
+</div>
+    <?php
+} ?>
+
+
+</form>
+
+
+
+<div class="description_footer"> <?php echo nl2br($_product->getDescriptionFooter()); ?></div>
+<!-- make all links with the 'rel' attribute open overlays -->
+<script>
+jQuery('#btnajoutpanier').ready(function() {
+jQuery("#btnajoutpanier").click(function() {
+      var valueselect = jQuery('.super-attribute-select').val();
+      if(valueselect && valueselect != '')
+      {
+        jQuery("#layer-ajout-panier").overlay().load();
+      }
+  });
+ })
+
+jQuery(function() {
+
+	// if the function argument is given to overlay,
+	// it is assumed to be the onBeforeLoad event listener
+	jQuery("#layer-ajout-panier").overlay({
+	//jQuery("#vignprodapercu").overlay({
+
+		mask: 'black',
+		//effect: 'apple',
+		api: true,
+
+		onBeforeLoad: function() {
+
+			// grab wrapper element inside content
+			var wrap = this.getOverlay().find(".contentWrap");
+			var self = this;
+
+			// load the page specified in the trigger
+			//wrap.load(this.getTrigger().attr("href"));
+			wrap.load(this.getTrigger().attr("href"), function(){
+			    jQuery('.close', this).click(function(){self.close()});
+			});
+		},
+
+		onClose: function() {
+		    jQuery('div.popup-produit-conteneur').html('');
+		}
+                
+
+	});
+
+});
+
+/*
+function loadsubmitbutton()
+{
+    var valueselect = jQuery('.super-attribute-select').val();
+    alert(valueselect);
+    if(valueselect != '')
+    {
+        jQuery('img#buttonchangeant').attr('id', 'btnajoutpanier');
+    }
+    else
+    {
+        jQuery('img#btnajoutpanier').attr('id', 'buttonchangeant');    
+    }
+  // $('form #vignprodapercu img.buttonchangeant').attr('id', '#btnajoutpanier');
+}
+*/
+/*
+jQuery('#btnajoutpanier').ready(function()
+{
+    jQuery('#btnajoutpanier').attr('id', '');
+    jQuery('#btnajoutpanier').css('opacity', '0.2');
+}
+)
+*/
+var height_descri = jQuery('.description_footer').css('height');
+var height_page = jQuery('.col-main').css('height');
+var comments_box = jQuery('.comments_box').css('height');
+height_descri = Number(height_descri.slice(0, -2));
+height_page = Number(height_page.slice(0, -2));
+comments_box = Number(comments_box.slice(0, -2));
+height_page = height_descri + height_page - comments_box;
+jQuery('.description_footer').ready(function()
+{
+    jQuery('.col-main').css('height', height_page + 'px');
+})
+</script>
+<div class="fichprod-popup-panier" id="layer-ajout-panier" style="display:none;">
+    <form action="<?php echo $this->getAddToCartUrl($_product) ?>" method="post" name="product_addtocart_form" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+	<div style="float:left; height:150px; padding:5px; text-align:left;">
+	<!--<div style="float:right; font-size:11px; font-weight:bold;"><a href="#" class="close">fermer X</a></div>-->
+	<div style="color:#E98000; float:left; width:100%; text-align:left; font-size:18px; font-weight:bold;">Votre produit a bien été ajouté au panier</div>
+	<div id="added-prod" style="float:left; width:380px; height:80px; margin-top:10px;">
+	    <div id="added-prod-photo" style="float:left; width:60px; height:60px; border:1px solid #CCCCCC;">
+
+	    </div>
+	    <div id="added-prod-name" style="float:left; width:275px; margin-left:10px;">
+
+	    </div>
+	    <div id="added-prod-qty" style="float:left; margin-left:10px;">
+
+	    </div>
+
+	</div>
+	<div class="boutons-layer-ajout-panier" style="float:right; width:200px; height:100px;">
+	    <img style="cursor:pointer;" class="close" onclick='location.href="<?php echo Mage::getBaseUrl() ?>checkout/cart";' src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_voirpanier.png" />
+	    <br /><br />
+	    <img style="cursor:pointer;" class="close" src="<?php echo Mage::getBaseUrl() ?>skin/frontend/default/oreca/images/btn_poursuivre.png" />
+	</div>
+
+	</div>
+	<!--<div style="float:left; height:300px;">-->
+	<div style="float:left;">
+
+	    <div style="float:left; margin-left:10px; width:590px;">
+                    <?php echo $this->getChildHtml('upsell'); ?>
+	    </div>
+	    
+            
+	</div>
+        
+        </form>
+    </div>

@@ -1,0 +1,73 @@
+<?php
+/*
+$catid = $_GET['catid'];
+if ($catid == 34 || $catid == 44 || $catid == 478) {
+	$categorytitle = "category-title-rouge";
+}
+else {
+	$categorytitle = "category-title-orange";
+}
+ */
+if (isset($_GET['catid'])) {
+    $catid = $_GET['catid'];
+}
+else {
+     $catid = 3;
+}
+$categorytitle = "category-title-orange";
+$_category = Mage::getModel('catalog/category')->load($catid);
+?>
+
+<div class="<?php echo $categorytitle; ?>">
+	<div class='category-title-text'>
+	<?php
+	if ($catid == 3) {
+		echo "Toutes les marques";
+	}
+	else {
+		echo $_category->getName()." - Toutes les marques";
+	}
+	?>
+
+	<?php if ($catid != 3) { echo '<a href="'.Mage::getBaseUrl().'marques?catid=3" class="marques-lientoutesmarques-ie" style="background:url('.$this->getSkinUrl('images/touteslesmarques-puce.png').') no-repeat 0 6px; padding-left:10px; float:right; font-size:13px; font-weight:bold;">Voir toutes les marques de la boutique Oreca-Store</a>'; } ?>
+
+	</div>
+</div>
+
+<?php
+$sql = "SELECT DISTINCT eaov.value, eaov.option_id FROM catalog_product_entity_int AS pei, eav_attribute_option_value AS eaov WHERE eaov.option_id = pei.value AND eaov.store_id = 0 AND attribute_id = (SELECT attribute_id FROM eav_attribute WHERE attribute_code = 'global_marques') AND pei.store_id = 0 AND entity_id IN (SELECT product_id FROM catalog_category_product_index where category_id = $catid and store_id = 6) ORDER BY eaov.value ASC";
+$marques = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+?>
+
+<div class="page">
+<?php
+foreach ($marques as $marque) {
+    $photomarque = Mage::getBaseUrl()."media/marques/138x138/".strtr($marque['value'], " ", "-").".gif";
+?>
+	<?php
+	if ($catid == 3) {
+		$debutlink = "<a href='".Mage::getBaseUrl()."store?global_marques=".$marque['option_id']."&parent_enfant=556&order=position&dir=asc' title='".$marque['value']."'>";
+		$finlink = "</a>";
+		$linkmarque = $debutlink."".$marque['value']."".$finlink;
+	}
+	else {
+		$debutlink = "<a href='".$_category->getUrl()."?global_marques=".$marque['option_id']."&parent_enfant=556&order=position&dir=asc' title='".$marque['value']."'>";
+		$finlink = "</a>";
+		$linkmarque = $debutlink."".$marque['value']."".$finlink;
+	}
+	?>
+
+	<div style="float:left; border:#D1D1D1 1px solid; margin:10px;" class="vignpilote-conteneur">
+		<div style="border-bottom:#D1D1D1 1px solid; text-align:center; width:120px; height:18px; color:#616060; font-weight:bold; text-transform:uppercase;" class="vignpilote-titre">
+			<?php echo $linkmarque; ?>
+		</div>
+		<div style="" class="vignmarque-photo">
+			<?php //$photomarque = "http://192.168.1.108/oreca-store/skin/frontend/default/blank/images/pilotes/Alain-Prost.jpg"; ?>
+			<?php echo $debutlink; ?><img src="<?php echo $photomarque; ?>" border="0" width="120px" height="120px" /><?php echo $finlink; ?>
+		</div>
+	</div>
+	</a>
+<?php
+}
+?>
+</div>

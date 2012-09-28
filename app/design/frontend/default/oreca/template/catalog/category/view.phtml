@@ -1,0 +1,205 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category view template
+ *
+ * @see Mage_Catalog_Block_Category_View
+ */
+?>
+<?php
+    $_helper    = $this->helper('catalog/output');
+    $_category  = $this->getCurrentCategory();
+    $_imgHtml   = '';
+    if ($_imgUrl = $_category->getImageUrl()) {
+        $_imgHtml = '<p class="category-image"><img src="'.$_imgUrl.'" alt="'.$this->htmlEscape($_category->getName()).'" title="'.$this->htmlEscape($_category->getName()).'" /></p>';
+        $_imgHtml = $_helper->categoryAttribute($_category, $_imgHtml, 'image');
+    }
+?>
+<?php
+if (isset($_GET['global_marques']) && !isset($_GET['global_pilote']) && !isset($_GET['univers'])) {
+	
+	$idoption = $_GET['global_marques'];
+	$sql = "SELECT * FROM footer_category WHERE type = 'global_marques' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+	if ($res) {
+		$texte_footer = $res[0]['texte'];
+	}
+	}
+elseif (!isset($_GET['global_marques']) && isset($_GET['global_pilote']) && !isset($_GET['univers'])) {
+	$idoption = $_GET['global_pilote'];
+	$sql = "SELECT * FROM footer_category WHERE type = 'global_pilote' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+	if ($res) {
+		$texte_footer = $res[0]['texte'];
+	}
+	}
+elseif (!isset($_GET['global_marques']) && !isset($_GET['global_pilote']) && isset($_GET['univers'])) {
+	$idoption = $_GET['univers'];
+	$sql = "SELECT * FROM footer_category WHERE type = 'univers' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+	if ($res) {
+		$texte_footer = $res[0]['texte'];
+	}
+	}
+  else
+  {
+      if($_description=$this->getCurrentCategory()->getDescription()): 
+          $texte_footer = $_helper->categoryAttribute($_category, $_description, 'description');
+    endif;
+  }
+  ?>
+<?php
+
+$testfiltres = isset($_GET["global_marques"]) || isset($_GET["global_capuche"]) || isset($_GET["collection"])
+		     || isset($_GET["univers"]) || isset($_GET["global_manches"]) || isset($_GET["global_pilote"])
+		     || isset($_GET["global_team"]) || isset($_GET["filtre1"]) || isset($_GET["filtre2"])
+		     || isset($_GET["filtre3"]) || isset($_GET["global_type_casques"]) || isset($_GET["taille"])
+		     || isset($_GET["global_couleurs"]) || isset($_GET["global_homologation"]) || isset($_GET["global_usage"])
+		     || isset($_GET["couleur"]) || isset($_GET["taille"]) || isset($_GET["cat"]);
+
+
+//*
+$filtres = ' - ';
+if($testfiltres)
+{
+    if(isset($_GET["global_marques"]))
+    {
+        $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', 'global_marques');
+        $attributes = $attribute->getSource()->getAllOptions(true, true);
+        foreach($attributes as $option){
+            if($option['value']==$_GET["global_marques"]){
+                $filtres .= $option['label'] . ' - ';
+            }
+        }
+       
+    }
+    if(isset($_GET["univers"]))
+    {
+        $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', 'univers');
+        $attributes = $attribute->getSource()->getAllOptions(true, true);
+        foreach($attributes as $option){
+            if($option['value']==$_GET["univers"]){
+                $filtres .= $option['label'] . ' - ';
+            }
+        }
+       
+    }
+    if(isset($_GET["global_pilote"]))
+    {
+        $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', 'global_pilote');
+        $attributes = $attribute->getSource()->getAllOptions(true, true);
+        foreach($attributes as $option){
+            if($option['value']==$_GET["global_pilote"]){
+                $filtres .= $option['label'] . ' - ';
+            }
+        }
+       
+    }
+    $filtres = substr($filtres,0,-3);
+}
+//*/
+// Landings
+$categoryID = $this->getCurrentCategory()->getId(); // Où qu'on est ?
+$listcats = array('34','44','27','29','103','141');
+$filename = "/var/www/magento/static/landings_univers_".$categoryID.".html";
+//var_dump($testfiltres);
+if (in_array($categoryID, $listcats) && !$testfiltres) {
+    //echo $this->getLayout()->getBlock('landings.univers')->toHtml();
+    include($filename);
+}
+else {
+?>
+<?php
+// Recherche par vehicule
+if ($categoryID == 104) {
+    echo $this->getLayout()->getBlock('categoryrechveh')->toHtml();
+}
+?>
+
+<?php if($_imgUrl): ?>
+    <?php echo $_imgHtml ?>
+<?php endif; ?>
+
+<div class="page-title category-title">
+    <?php /* if($this->IsRssCatalogEnable() && $this->IsTopCategory()): ?>
+        <a href="<?php echo $this->getRssLink() ?>" class="link-rss"><?php echo $this->__('Subscribe to RSS Feed') ?></a>
+    <?php endif; */ ?>
+    <h1>
+        <?php 
+        echo $_helper->categoryAttribute($_category, $_category->getName(), 'name');
+        if($filtres != ' - ')
+        {
+            echo $filtres;
+        }
+        else
+        {
+            echo ' sport automobile';
+        }
+        ?>
+    </h1>
+</div>
+<?php echo '<div class="description_footer">' . $texte_footer . '</div>'; ?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<?php 
+echo $this->getLayout()->getBlock('category.bestsales')->toHtml();
+//echo $this->getLayout()->createBlock('Mage_Adminhtml_Block_Template', 'catbestsales')->setData('template', 'page/html/catbestsales.phtml')->toHtml()
+?>
+
+
+<?php if($this->isContentMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+
+<?php elseif($this->isMixedMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+    <?php echo $this->getProductListHtml() ?>
+
+<?php else: ?>
+    <?php echo $this->getProductListHtml() ?>
+<?php endif; ?>
+<?php /* if($_description=$this->getCurrentCategory()->getDescription()): ?>
+    <div class="category-description std">
+        <?php echo $_helper->categoryAttribute($_category, $_description, 'description') ?>
+    </div>
+    <?php endif; */?>
+<?php  } ?> 
+<script type="text/javascript">
+    /*
+    var height_descri = jQuery('.description_footer').css('height');
+    var height_page = jQuery('.col-main').css('height');
+    height_descri = Number(height_descri.slice(0, -2));
+    height_page = Number(height_page.slice(0, -2));
+    height_page = height_descri + height_page;
+    jQuery('.description_footer').ready(function()
+    {
+        jQuery('.col-main').css('height', height_page + 'px');
+    });
+    //*/
+</script>

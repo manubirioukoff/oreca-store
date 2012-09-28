@@ -1,0 +1,133 @@
+<?php
+function wd_remove_accents($str, $charset='utf-8')
+{
+    $str = htmlentities($str, ENT_NOQUOTES, $charset);
+    $str = preg_replace('#\&([A-za-z])(?:acute|cedil|circ|grave|ring|tilde|uml)\;#', '\1', $str);
+    $str = preg_replace('#\&([A-za-z]{2})(?:lig)\;#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+    $str = preg_replace('#\&[^;]+\;#', '', $str); // supprime les autres caractères
+    return $str;
+}
+
+// Combis sur mesure
+if (isset($_GET['cat']) && $_GET['cat'] == '1209') {
+    ?>
+    <div class="page" style="text-align: center;"><img src="http://www.oreca-store.com/bannieres/combi/combi-sur-mesure2.jpg" border="0" alt="Combinaison sur mesure" /></div>
+<?php
+}
+else {
+
+// D?tection des filtres univers, pilotes, marques...
+$bandeau = "";
+// MARQUES
+if (isset($_GET['global_marques']) && !isset($_GET['global_pilote']) && !isset($_GET['univers'])) {
+	
+	$idoption = $_GET['global_marques'];
+	$sql = "SELECT * FROM bandeaux_category WHERE type = 'global_marques' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+	if ($res) {
+		$bgcolor = $res[0]['bgcolor'];
+		$texte = $res[0]['texte'];
+		$name = strtr($res[0]['nom'], " ", "-");
+		$urlbandeau = Mage::getBaseUrl()."media/marques/bandeaux/".$name.".jpg";
+
+		$bandeau = "<div style='width:100%; background-color:".$bgcolor."; float:left;'>";
+		$bandeau .= "<div class='page'>";
+		$bandeau .= "<div style='background-image:url(".$urlbandeau."); width:1000px; height:260px;'>";
+		$bandeau .= "<div style='overflow:hidden; float:right; width:320px; height:220px; margin-top:28px; margin-right:20px; color:#FFFFFF; font-size:12px; font-weight:bold; text-align:justify;'>";
+		$bandeau .= $texte;
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+	}
+}
+
+// PILOTES
+if (!isset($_GET['global_marques']) && isset($_GET['global_pilote']) && !isset($_GET['univers'])) {
+	$idoption = $_GET['global_pilote'];
+	$sql = "SELECT * FROM bandeaux_category WHERE type = 'global_pilote' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+	if ($res) {
+		$bgcolor = $res[0]['bgcolor'];
+		$texte = $res[0]['texte'];
+		$name = strtr($res[0]['nom'], " ", "-");
+		$urlbandeau = Mage::getBaseUrl()."media/pilotes/bandeaux/".$name.".jpg";
+
+		$bandeau = "<div style='width:100%; background-color:".$bgcolor."; float:left;'>";
+		$bandeau .= "<div class='page'>";
+		$bandeau .= "<div style='background-image:url(".$urlbandeau."); width:1000px; height:260px;'>";
+		$bandeau .= "<div style='overflow:hidden; float:right; width:320px; height:220px; margin-top:28px; margin-right:20px; color:#FFFFFF; font-size:12px; font-weight:bold; text-align:justify;'>";
+		$bandeau .= $texte;
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+	}
+}
+
+// UNIVERS
+if (!isset($_GET['global_marques']) && !isset($_GET['global_pilote']) && isset($_GET['univers'])) {
+	$idoption = $_GET['univers'];
+	$sql = "SELECT * FROM bandeaux_category WHERE type = 'univers' AND nom = (SELECT value FROM eav_attribute_option_value WHERE option_id = $idoption AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+
+	if ($res) {
+		$bgcolor = $res[0]['bgcolor'];
+		$texte = $res[0]['texte'];
+		$name = strtr($res[0]['nom'], " ", "-");
+		$name = wd_remove_accents($name);
+		$urlbandeau = Mage::getBaseUrl()."media/univers/bandeaux/".$name.".jpg";
+
+		$bandeau = "<div style='width:100%; background-color:".$bgcolor."; float:left;'>";
+		$bandeau .= "<div class='page'>";
+		$bandeau .= "<div style='background-image:url(".$urlbandeau."); width:1000px; height:260px;'>";
+		$bandeau .= "<div style='overflow:hidden; float:right; width:320px; height:220px; margin-top:28px; margin-right:20px; color:#FFFFFF; font-size:12px; font-weight:bold; text-align:justify;'>";
+		$bandeau .= $texte;
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+	}
+}
+
+$testfiltres = isset($_GET["global_marques"]) || isset($_GET["global_capuche"]) || isset($_GET["collection"])
+		     || isset($_GET["univers"]) || isset($_GET["global_manches"]) || isset($_GET["global_pilote"])
+		     || isset($_GET["global_team"]) || isset($_GET["filtre1"]) || isset($_GET["filtre2"])
+		     || isset($_GET["filtre3"]) || isset($_GET["global_type_casques"]) || isset($_GET["taille"])
+		     || isset($_GET["global_couleurs"]) || isset($_GET["global_homologation"]) || isset($_GET["global_usage"])
+		     || isset($_GET["couleur"]) || isset($_GET["taille"]) || isset($_GET["cat"]);
+
+
+if (!$testfiltres && Mage::registry('current_category')) {
+   
+    $idoption = Mage::registry('current_category')->getId();
+	$sql = "SELECT * FROM bandeaux_category WHERE type = 'landing' AND nom = (SELECT value FROM catalog_category_entity_varchar WHERE entity_id = $idoption AND attribute_id = 479 AND store_id = 0)";
+	$res = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($sql);
+	//echo $sql;
+	if ($res) {
+		$bgcolor = $res[0]['bgcolor'];
+		$texte = $res[0]['texte'];
+		$name = strtr($res[0]['nom'], " ", "-");
+		//$name = wd_remove_accents($name);
+		$urlbandeau = Mage::getBaseUrl()."media/landings/bandeaux/".$name.".jpg";
+
+		$bandeau = "<div style='width:100%; background-color:".$bgcolor."; float:left;'>";
+		$bandeau .= "<div class='page'>";
+		$bandeau .= "<div style='background-image:url(".$urlbandeau."); width:1000px; height:350px;'>";
+		$bandeau .= "<div style='overflow:hidden; float:right; width:260px; height:340px; margin-top:10px; margin-right:10px; color:#2F2F2F; font-size:11px; font-weight:bold; text-align:justify;'>";
+		$bandeau .= $texte;
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+		$bandeau .= "</div>";
+	}
+}
+
+if ($bandeau != "") {
+	echo $bandeau;
+}
+
+}
+?>

@@ -1,0 +1,192 @@
+<?php
+//include_once('/data/www/www.oreca-store.com/httpdocs/services/conf/database_connection.php');
+//include_once('/data/www/www.oreca-store.com/httpdocs/services/class/PHPMailer/class.phpmailer.php');
+include_once('/var/www/magento/services/conf/database_connection.php');
+include_once('/var/www/magento/services/class/PHPMailer/class.phpmailer.php');
+
+function sendEmail($tabaddresses,$subject,$body) {
+    $mail = new PHPmailer();
+    //$mail->IsSMTP();
+    $mail->IsHTML(true);
+    //$mail->Host='hote_smtp';
+    $mail->From='contact@oreca.fr';
+    $mail->FromName='Contact';
+    foreach($tabaddresses as $add) {
+	$mail->AddAddress($add);
+    }
+    $mail->AddReplyTo('webmaster@oreca.fr');
+    $mail->Subject=$subject;
+    $mail->Body=utf8_decode($body);
+    if(!$mail->Send()){
+      //echo $mail->ErrorInfo;
+    }
+    else{
+      //echo 'Mail envoyé avec succès';
+    }
+    //$mail->SmtpClose();
+    unset($mail);
+}
+
+echo "<pre>";
+//var_dump($_POST);
+echo "</pre>";
+
+// Initialisation des variables
+if(isset($_POST['typedemande'])) { $typedemande = $_POST['typedemande']; } else { $typedemande = ''; }
+if(isset($_POST['civ'])) { $civ = $_POST['civ']; } else { $civ = ''; }
+if(isset($_POST['nom'])) { $nom = $_POST['nom']; } else { $nom = ''; }
+if(isset($_POST['prenom'])) { $prenom = $_POST['prenom']; } else { $prenom = ''; }
+if(isset($_POST['email'])) { $email = $_POST['email']; } else { $email = ''; }
+if(isset($_POST['tel'])) { $tel = $_POST['tel']; } else { $tel = ''; }
+if(isset($_POST['numcmd'])) { $numcmd = $_POST['numcmd']; } else { $numcmd = ''; }
+if(isset($_POST['raison'])) { $raison = $_POST['raison']; } else { $raison = ''; }
+if(isset($_POST['message'])) { $message = $_POST['message']; } else { $message = ''; }
+
+$corpsmail = "<html><body>
+    Civilite : ".$civ."<br />
+    Nom : ".$nom."<br />
+    Prenom : ".$prenom."<br />
+    Email : ".$email."<br />
+    Tel : ".$tel."<br />";
+
+if($numcmd != '') {
+    $corpsmail .= "Numero commande : ".$numcmd."<br />";
+}
+
+if($raison != '') {
+    $corpsmail .= "Raison annulation : ".$raison."<br />";
+}
+
+$corpsmail .= "Message : ".$message."<br /></body></html>";
+
+
+switch ($typedemande) {
+    case 'suivi':
+        $destinataires = array('sinternet@oreca.fr','flaverne@oreca.fr');
+	$titre = 'Demande de suivi de commande - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'annulation':
+        $destinataires = array('sinternet@oreca.fr','flaverne@oreca.fr');
+	//$destinataires = array('ebirioukoff@oreca.fr');
+	$titre = 'Demande annulation de commande - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'technique':
+        $destinataires = array('jpereira@oreca.fr','flaverne@oreca.fr');
+	$titre = 'Demande de renseignement technique - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'devis':
+        $destinataires = array('jpereira@oreca.fr','flaverne@oreca.fr');
+	$titre = 'Demande de devis - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'site':
+        $destinataires = array('sinternet@oreca.fr','flaverne@oreca.fr','nfayon@oreca.fr');
+	$titre = 'Demande utilisation du site - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'partenariat':
+        $destinataires = array('jpereira@oreca.fr','flaverne@oreca.fr','sinternet@oreca.fr','tdanieli@oreca.fr');
+	$titre = 'Demande de partenariat - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'produit':
+        $destinataires = array('lcourdon@oreca.fr','flaverne@oreca.fr','tdanieli@oreca.fr');
+	$titre = 'Proposition produit - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'autres':
+        $destinataires = array('jpereira@oreca.fr','flaverne@oreca.fr');
+	$titre = 'Demande autres - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+    case 'affiliation':
+        $destinataires = array('sinternet@oreca.fr','flaverne@oreca.fr','nfayon@oreca.fr');
+	$titre = 'Demande affiliation - Oreca-Store.com';
+	sendEmail($destinataires,$titre,$corpsmail);
+        break;
+
+}
+
+// Insertion en base
+$nom = addslashes($nom);
+$prenom = addslashes($prenom);
+$email = addslashes($email);
+$tel = addslashes($tel);
+$numcmd = addslashes($numcmd);
+$message = addslashes($message);
+
+$req = "INSERT INTO contacts_clients (id, datecontact, typedemande, civ, nom, prenom, email, tel, numcmd, raison, message)
+        VALUES (NULL, CURRENT_TIMESTAMP, '$typedemande', '$civ', '$nom', '$prenom', '$email', '$tel', '$numcmd', '$raison', '$message');";
+$res = mysql_query($req);
+//echo $req;
+?>
+<div class="page">
+   <div style="float:left; width:785px; border:1px solid #B6B6B6; height:720px; margin-bottom:10px;">
+       <div style="float:left; width:775px; background-color: #B6B6B6; font-size: 16px; color: #FFFFFF; font-weight: bold; padding:5px;">
+	    Nous contacter par email
+       </div>
+       <div style="float:left; width:785px;">
+	   <div style="float:left; width:200px; height:308px; border-right:1px solid #B6B6B6;">
+	       <img src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/contact-enveloppe.jpg" />
+	   </div>
+	   <div style="float:left; width:555px;">
+	       <div style="float:left; width:545px; padding:5px;">
+		<strong style="font-size:14px;">Votre demande a bien été prise en compte.</strong>
+	       </div>
+	       
+	   </div>
+       </div>
+   </div>
+   <div style="float:right; width:185px; height:720px; margin-bottom:10px;">
+       <div style="float:left; width:100%; margin-bottom:10px; border:1px solid #B6B6B6;">
+	   <div style="float:left; width:175px; background-color: #B6B6B6; font-size: 16px; color: #FFFFFF; font-weight: bold; padding:5px;">
+		Par téléphone
+	   </div>
+	   <div style="float:left; width:175px; padding:5px;">
+	       <strong>Question ? Conseil ?<br />Vous cherchez un produit ?</strong><br />Appelez-nous...
+	       <br /><br />
+	       <strong>Depuis la France</strong><br />
+	       <span style="color:#0982ED; font-size: 22px; font-weight: bold;">0 494 885 790</span>
+	       <br /><br />
+	       Depuis l'international<br />
+	       <span style="color:#0982ED; font-size: 16px; font-weight: bold;">+33 494 885 790</span>
+	       <br /><br />
+	       Par fax<br />
+	       <span style="color:#0982ED; font-size: 16px; font-weight: bold;">0 494 328 001</span>
+	   </div>
+       </div>
+       <div style="float:left; width:100%; border:1px solid #B6B6B6;">
+	   <div style="float:left; width:175px; background-color: #B6B6B6; font-size: 16px; color: #FFFFFF; font-weight: bold; padding:5px;">
+		Dans nos boutiques
+	   </div>
+	   <div style="float:left; width:175px; height:405px; padding:5px;">
+	       <span style="color:#0982ED; font-size: 12px; font-weight: bold;">Circuit Paul Ricard HTTT</span> <br />
+	       RDN8 2760 Route des Hauts du Camp<br />
+	       83330 Le Castellet <br />
+	       <br /><br />
+	       <strong>Horaires d'ouverture :</strong><br />
+	       Du lundi au vendredi<br />
+	       De 10h à 18h<br /><br />
+	       <div style="width:100%; text-align: center;">
+		   <a href="http://g.co/maps/ugm6z" target="_blank"><img src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/contact-btn-plan.png" /></a>
+	       </div>
+	       <br /><br />
+	       <span style="color:#0982ED; font-size: 12px; font-weight: bold;">Oreca-Store</span> <br />
+	       Parc d'activité de Signes<br />
+	       Avenue de Rome<br />
+	       83870 SIGNES
+	       <br /><br />
+	       <strong>Horaires d'ouverture :</strong><br />
+	       Du mardi au samedi<br />
+	       De 10h à 19h<br /><br />
+	       <div style="width:100%; text-align: center;">
+		   <a href="http://g.co/maps/u4642" target="_blank"><img src="<?php echo Mage::getBaseUrl(); ?>skin/frontend/default/oreca/images/contact-btn-plan.png" /></a>
+	       </div>
+	   </div>
+       </div>
+   </div>
+</div>
+

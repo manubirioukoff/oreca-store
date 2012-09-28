@@ -1,0 +1,210 @@
+<?php
+/* 
+ Produits affiches en HP
+ */
+?>
+<?php
+//include('/var/www/magento/services/bestsales/bestsales.function.php');
+$tabshoppingqty = array('8SP00120243NR','RBR11_TSH_LOG_B_XL','MIN11_CAS','RBR11_TSH_LOG_W_XL','RBR12_CAS_TEA','SOURI_F430','8SP00120242NR','1RSEB03','8SP00120244NR','8SP00120246NR');
+$tabshoppingca = array('GUL11_SAC_ORI','8SP00120243NR','1RSEB03','GUL11_BLO_SHEL_XL','GUL10_BLF_GPC_XL','8SP00120546NR','8SP00120242NR','8SP00120244NR','8SP00120246NR','RBR12_SSH_TEA_M');
+$tabpratiqueqty = array('EHF5X55','8SP0SN41','8SPSS14','S5325','614DAAL0','614014NA','F595RSR1955015','414MT025','444100','8EQ014SUP');
+$tabpratiqueca = array('8EQ014GPHD2','F595RSR1955015','8EQ00121','607AA0210CG2BL','R070860578','607H20MCS','607DA0210BG2BL','614014NA','607H20MRS2','8SP0033053L');
+
+shuffle($tabshoppingqty);
+shuffle($tabshoppingca);
+shuffle($tabpratiqueqty);
+shuffle($tabpratiqueca);
+
+// Dédoublonnage quantité / CA
+$tabfinalshopping = array();
+$tabfinalpratique = array();
+foreach($tabshoppingca as $sku) {
+    $product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+    if ($product) {
+	if(!in_array($product->getRefUnique(),$tabfinalshopping)) {
+	    $tabfinalshopping[] = $product->getRefUnique();
+	}
+    }
+}
+foreach($tabshoppingqty as $sku) {
+    if (!in_array($sku,$tabshoppingca)) {
+	$product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+	if ($product) {
+	    if(!in_array($product->getRefUnique(),$tabfinalshopping)) {
+		$tabfinalshopping[] = $product->getRefUnique();
+	    }
+	}
+    }
+}
+foreach($tabpratiqueca as $sku) {
+    $product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+    if ($product) {
+	if(!in_array($product->getRefUnique(),$tabfinalpratique)) {
+	    $tabfinalpratique[] = $product->getRefUnique();
+	}
+    }
+}
+foreach($tabpratiqueqty as $sku) {
+    if (!in_array($sku,$tabpratiqueca)) {
+	$product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+	if ($product) {
+	    if(!in_array($product->getRefUnique(),$tabfinalpratique)) {
+		$tabfinalpratique[] = $product->getRefUnique();
+	    }
+	}
+    }
+}
+//var_dump($tabfinalshopping);
+//var_dump($tabfinalpratique);
+//die();
+
+?>
+<div class="hpbestsales-container">
+    <div class="hpbestsales-titre">
+	MEILLEURES VENTES
+    </div>
+    <div class="hpproducts-passion">
+	<?php
+	for($i=0; $i<6; $i++) {
+	    //echo $prod->getSku()." - ".$prod->getParentEnfant()."<br />";
+	    $sku = $tabfinalshopping[$i];
+	    $prod = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(115, 115);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    $finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+
+	?>
+
+	<div class="hpbestsales-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+	    
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+    </div>
+    <div class="hpproducts-pratique">
+	<?php
+	for($i=0; $i<6; $i++) {
+	    //echo $prod->getSku()." - ".$prod->getParentEnfant()."<br />";
+	    $sku = $tabfinalpratique[$i];
+	    $prod = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+	    $productimage = Mage::getModel('core/layout')->helper('catalog/image')->init($prod, 'image')->resize(220, 220);
+	    $marque = $prod->getResource()->getAttribute('global_marques')->getFrontend()->getValue($prod);
+	    $marqueimg = strtr($marque, " ", "-");
+	    $finalprice = Mage::helper('tax')->getPrice($prod, $prod->getFinalPrice(), true);
+	    $regularprice = Mage::helper('tax')->getPrice($prod, $prod->getPrice(), true);
+	    $opmkg = $prod->getResource()->getAttribute('global_op_mkg')->getFrontend()->getValue($prod);
+	    if ($opmkg == 'promotion') {
+		$opmkg = "";
+	    }
+
+	    // A partir de
+	    $affichapartirde = 'display:none;';
+
+	    if($prod->getTypeId() == 'configurable') {
+		$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $prod);
+		//echo "childids";
+		//var_dump($childProducts);
+		$tabprices = array();
+
+		foreach ($childProducts as $child) {
+		    //echo "sku : ".$child->getSku()." - price : ".$child->getFinalPrice()." - status : ".$child->getStatus()." - isinstock : ".$child->getStockItem()->getIsInStock()."<br />";
+		    if($child->getStatus() == 1 && $child->getStockItem()->getIsInStock() != 0) {
+			$tabprices[] = $child->getFinalPrice();
+		    }
+		}
+		sort($tabprices);
+		$lastprice = count($tabprices) - 1;
+		//var_dump($tabprices);
+		if ($tabprices[0] != $tabprices[$lastprice]) {
+		    $affichapartirde = 'display:block;';
+		    //$finalprice = Mage::helper('tax')->getPrice($prod, $tabprices[0], true);
+		}
+	    }
+	    // En promo ?
+	    $displaypastille = "display:none;";
+	    $pcentpromo = 0;
+	    if ($regularprice > $finalprice) {
+		$displaypastille = "display:block;";
+		$pcentpromo = round((100 - ((100*$finalprice)/$regularprice)),0);
+		$opmkg = 'promotion';
+	    }
+	?>
+
+	<div class="hpbestsales-vignette" onclick="window.location.href='<?php echo $prod->getProductUrl(); ?>';">
+	    <div class="vignprod-<?php echo $opmkg; ?>"></div>
+
+	    <div class="hpbestsales-photo">
+		<img title="<?php echo $prod->getName(); ?>" alt="<?php echo $prod->getName(); ?>" src="<?php echo $productimage; ?>" width="115" height="115" />
+	    </div>
+	    <div class="hpbestsales-name">
+		<a href="<?php echo $prod->getProductUrl(); ?>" onclick="disabledEventPropagation(event);"><?php echo $prod->getName(); ?></a>
+	    </div>
+	    <div class="hpbestsales-pastillepromo" style="<?php echo $displaypastille; ?>">
+		<div class="remise-texte">-<?php echo $pcentpromo; ?></div><div class="remise-pcent">%</div>
+	    </div>
+	    <div class="hpbestsales-prix">
+		<div class="apartirde" style="display:none;">A partir de</div>
+		<div class="prix-barre" style="<?php echo $displaypastille; ?>"><?php echo Mage::helper('core')->currency($regularprice,true,false); ?></div>
+		<div class="prix-normal"><?php echo Mage::helper('core')->currency($finalprice,true,false); ?></div>
+	    </div>
+	</div>
+	<?php
+	}
+	?>
+    </div>
+</div>

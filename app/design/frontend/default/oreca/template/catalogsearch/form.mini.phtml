@@ -1,0 +1,83 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+//echo "sessid : ".Mage::getModel("core/session")->getEncryptedSessionId()."<br />";
+?>
+<script language="JavaScript" type="text/javascript" src="<?php echo Mage::getBaseUrl(); ?>js/antidot/ajax_search.js"></script>
+<div class="header-recherche">
+    <form id="frmSearch" action="<?php echo Mage::getBaseUrl(); ?>search" method="get">
+            <!--<input type="text" id="txtSearch" name="txtSearch" alt="Search Criteria" onkeyup="searchSuggest();" autocomplete="off" />-->
+            <input class="input-recherche" type="text" id="q" name="q" alt="Search Criteria" onkeyup="searchSuggest();" autocomplete="off" onclick="if (this.value == '<?php echo $this->__('Searching for...'); ?>') { this.value=''; }" value="<?php echo $this->__('Searching for...'); ?>" />
+            <!--<input type="text" style="width:575px;" id="q" name="q" alt="Search Criteria" autocomplete="off" />-->
+            <!--<input type="submit" id="cmdSearch" name="cmdSearch" value="Search" alt="Run Search" /><br />-->
+            <input class="btn-search" type="image" src="<?php echo $this->getSkinUrl('images/btn_search.png') ?>" />
+            <!--<div id="search_suggest" onmouseout="if (this == event.target){suggestOut('search_suggest');}" style="position:absolute; margin-left:22px; padding-left:5px; padding-bottom: 3px; z-index:1000; font-size:11px; color:#616060; background-color:#FFFFFF; width:570px;  border:1px solid #CCCCCC; display:none;">-->
+             <div id="search_suggest" style="position:absolute; margin-left:22px; padding-left:5px; padding-bottom: 3px; z-index:999; font-size:11px; color:#616060; background-color:#FFFFFF; border:1px solid #CCCCCC; display:none;">
+                <div id="suggest_marques" style="float:left;">
+                    <div style="font-weight:bold; color:#000000; font-size:12px; margin-bottom:3px; margin-left:15px;">Marques</div>
+                    <div style="font-weight:normal;">
+                   <a class="linksuggest" href="#">AUDI</a>
+                   <a class="linksuggest" href="#">CITROEN WRC</a>
+                    <a class="linksuggest" href="#">DAKAR</a>
+                   <a class="linksuggest" href="#">DUCATI</a>
+                    <a class="linksuggest" href="#">FERRARI F1</a>
+                    </div>
+                </div>
+                <div id="suggest_categories" style="float:left; margin-left:3px;">
+                    <div style="font-weight:bold; color:#000000; font-size:12px; margin-bottom:3px; margin-left:15px;">Catégories</div>
+                    <div style="font-weight:normal;">
+                    <a class="linksuggest" href="#">T-Shirts</a>
+                    <a class="linksuggest" href="#">Chemises</a>
+                    <a class="linksuggest" href="#">Polos</a>
+                    <a class="linksuggest" href="#">Sweats</a>
+                    <a class="linksuggest" href="#">Blousons</a>
+                    </div>
+                </div>
+                <div id="suggest_pilotes" style="float:left;">
+                    <div style="font-weight:bold; color:#000000; font-size:12px; margin-bottom:3px; margin-left:15px;">Pilotes</div>
+                    <div style="font-weight:normal;">
+                    <a class="linksuggest" href="#">Dani Sordo</a>
+                    <a class="linksuggest" href="#">Felipe Massa</a>
+                    <a class="linksuggest" href="#">Fernando Alonso</a>
+                    <a class="linksuggest" href="#">Lewis Hamilton</a>
+                   <a class="linksuggest" href="#">Mark Webber</a>
+                    </div>
+                </div>
+                <div id="suggest_mostsearched" style="float:left;">
+                    <div style="font-weight:bold; color:#000000; font-size:12px; margin-bottom:3px; margin-left:15px;">Les plus recherchés</div>
+                    <div style="font-weight:normal;">
+                    <a class="linksuggest" href="<?php echo Mage::getBaseUrl(); ?>search?q=durite">Durite</a>
+                   <a class="linksuggest" href="#">Rossi</a>
+                    <a class="linksuggest" href="#">Lorem</a>
+                    <a class="linksuggest" href="#">Ipsum</a>
+                    <a class="linksuggest" href="#">Dolor</a>
+                    </div>
+                </div>
+            </div>
+    </form>
+</div>
+<div class="under-search">
+    <span style="color:#FA7206">></span> <a href="<?php echo Mage::getBaseUrl(); ?>quickorder"><?php echo $this->__('Search by SKU...'); ?></a>
+</div>
